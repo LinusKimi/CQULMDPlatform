@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace coordinateCtrlSys.ViewModel
 {
-    public class EmptyCurrentForgConverter : IValueConverter
+    public class BoardCurrentForgConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

@@ -17,14 +17,17 @@ namespace coordinateCtrlSys.ViewModel
 
             switch ((int)value)
             {
+                // 未测试
                 case 0:
                     color = Brushes.Blue;
                     break;
-
+                
+                // 未连接
                 case 1:
                     color = Brushes.Red;
                     break;
 
+                // 已连接
                 case 2:
                     color = Brushes.Green;
                     break;

@@ -11,9 +11,9 @@ namespace coordinateCtrlSys
 {
     public class ReadConfiguration : IConfigReader
     {
-        public ConfigurationData ReadFile()
+        public ConfigurationData ReadFile(string path)
         {
-            using (var fs = new FileStream("./Settings/config.json", FileMode.Open))
+            using (var fs = new FileStream(path, FileMode.Open))
             {
                 using (var streamReader = new StreamReader(fs, Encoding.GetEncoding("gb2312")))
                 {
@@ -23,11 +23,5 @@ namespace coordinateCtrlSys
             }
         }
 
-        public void WriteFile(ConfigurationData s)
-        {
-            string ss = JsonConvert.SerializeObject(s, Formatting.Indented);
-         
-            File.WriteAllText("./Settings/config.json", ss, Encoding.UTF8);
-        }
     }
 }

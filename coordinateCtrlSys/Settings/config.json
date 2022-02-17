@@ -1,242 +1,37 @@
 {
   "systemConfig": {
-    "serverIP": "192.168.2.253",
-    "serverPort": "8000"
+    // 厂商
+    "Factory": "YJ",
+
+    // 软件版本
+    "SoftwareVersion": "",
+
+    // 下位机接口 IIC / UART
+    "BoardInterface": "IIC",
+
+    // IIC 速率
+    "IICBaud": "100000",
+
+    // 串口 波特率 （8 - N - 1 暂时默认）
+    "UARTBaud": "115200",
+
+    // 芯片类型
+    "MCU": "STM32G0",
+
+    // 芯片烧写Flash首地址
+    "FlashAddress": "0x0000000",
+
+    // 烧结文件名
+    "BinFileName": ".bin"
   },
-  "ConfigurationNodeGroup": [
-    {
-      "NodeID": 0,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": "测试1号",
-      "NodeIP": "192.168.2.100",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": {
-        "SelectNodeID": 0,
-        "SelectNodeName": "测试1号",
-        "SelectNodeWorkPatter": 0,
-        "SecondarySourceOutputCnt": 2,
-        "SecondarySourceOutputChannel": [
-          0,
-          1
-        ],
-        "ErrorSensorCnt": 3,
-        "ErrorSensorList": [
-          0,
-          1,
-          2
-        ],
-        "FreqCnt": 2,
-        "FreqList": [
-          50.0,
-          100.0
-        ],
-        "FreqStep": [
-          0.05,
-          0.03
-        ],
-        "IdenRange": 0.03,
-        "MaxRange": 0.5
-      }
-    },
-    {
-      "NodeID": 1,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": "测试2号",
-      "NodeIP": "192.168.2.101",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": {
-        "SelectNodeID": 1,
-        "SelectNodeName": "测试2号",
-        "SelectNodeWorkPatter": 0,
-        "SecondarySourceOutputCnt": 2,
-        "SecondarySourceOutputChannel": [
-          0,
-          1
-        ],
-        "ErrorSensorCnt": 3,
-        "ErrorSensorList": [
-          0,
-          1,
-          2
-        ],
-        "FreqCnt": 2,
-        "FreqList": [
-          50.0,
-          100.0
-        ],
-        "FreqStep": [
-          0.05,
-          0.03
-        ],
-        "IdenRange": 0.0,
-        "MaxRange": 0.0
-      }
-    },
-    {
-      "NodeID": 2,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": null,
-      "NodeIP": "192.168.2.102",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": {
-        "SelectNodeID": 2,
-        "SelectNodeName": "121212",
-        "SelectNodeWorkPatter": 0,
-        "SecondarySourceOutputCnt": 2,
-        "SecondarySourceOutputChannel": [
-          0,
-          1
-        ],
-        "ErrorSensorCnt": 0,
-        "ErrorSensorList": [],
-        "FreqCnt": 0,
-        "FreqList": [],
-        "FreqStep": [],
-        "IdenRange": 0.0,
-        "MaxRange": 0.0
-      }
-    },
-    {
-      "NodeID": 3,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": null,
-      "NodeIP": "192.168.2.103",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": null
-    },
-    {
-      "NodeID": 4,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": null,
-      "NodeIP": "192.168.2.104",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": null
-    },
-    {
-      "NodeID": 5,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": null,
-      "NodeIP": "192.168.2.105",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": null
-    },
-    {
-      "NodeID": 6,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": null,
-      "NodeIP": "192.168.2.106",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": null
-    },
-    {
-      "NodeID": 7,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": null,
-      "NodeIP": "192.168.2.107",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": null
-    },
-    {
-      "NodeID": 8,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": null,
-      "NodeIP": "192.168.2.108",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": null
-    },
-    {
-      "NodeID": 9,
-      "NodeSocketID": "",
-      "NodeSelect": true,
-      "NodeName": null,
-      "NodeIP": "192.168.2.109",
-      "NodePort": "",
-      "NodeConnect": false,
-      "NodeWorkPattern": 3,
-      "NodeSelectSetting": null
-    }
-  ],
-  "NodeTemporaryParameters": [
-    {
-      "SelectNodeID": 0,
-      "SelectNodeName": "测试1号",
-      "SelectNodeWorkPatter": 3,
-      "SecondarySourceOutputCnt": 2,
-      "SecondarySourceOutputChannel": [
-        0,
-        1
-      ],
-      "ErrorSensorCnt": 3,
-      "ErrorSensorList": [
-        0,
-        1,
-        2
-      ],
-      "FreqCnt": 2,
-      "FreqList": [
-        50.0,
-        100.0
-      ],
-      "FreqStep": [
-        0.05,
-        0.03
-      ],
-      "IdenRange": 0.03,
-      "MaxRange": 0.5
-    },
-    {
-      "SelectNodeID": 1,
-      "SelectNodeName": "测试2号",
-      "SelectNodeWorkPatter": 3,
-      "SecondarySourceOutputCnt": 2,
-      "SecondarySourceOutputChannel": [
-        0,
-        1
-      ],
-      "ErrorSensorCnt": 3,
-      "ErrorSensorList": [
-        0,
-        1,
-        2
-      ],
-      "FreqCnt": 2,
-      "FreqList": [
-        50.0,
-        100.0
-      ],
-      "FreqStep": [
-        0.05,
-        0.03
-      ],
-      "IdenRange": 0.0,
-      "MaxRange": 0.0
-    }
-  ]
-}
+  "ConfigurationNode": {
+    // 单次指令
+    "SignalCMD": "55 AA 0D 0C",
+
+    // 连续指令
+    "ContinualCMD": "55 AA 0D 0C",
+
+    // 停止连续
+    "StopContCMD": "55 AA 0D 0C"
+  }
+ }

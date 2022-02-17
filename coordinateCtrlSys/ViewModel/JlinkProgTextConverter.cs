@@ -5,38 +5,34 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace coordinateCtrlSys.ViewModel
 {
-    public class EmptyCurrentForgConverter : IValueConverter
+    public class JlinkProgTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var color = Brushes.Blue;
+            string connect = "未测试";
 
             switch ((int)value)
             {
-                // 未测试
                 case 0:
-                    color = Brushes.Blue;
+                    connect = "未测试";
                     break;
 
-                // out of range 
                 case 1:
-                    color = Brushes.Red;
+                    connect = "失败";
                     break;
 
-                // in the range
                 case 2:
-                    color = Brushes.Green;
+                    connect = "成功";
                     break;
 
                 default:
                     break;
             }
 
-            return color;
+            return connect;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

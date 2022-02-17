@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace coordinateCtrlSys.ViewModel
 {
-    public class EmptyCurrentForgConverter : IValueConverter
+    public class JlinkProgForgConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -22,12 +22,12 @@ namespace coordinateCtrlSys.ViewModel
                     color = Brushes.Blue;
                     break;
 
-                // out of range 
+                // 未连接
                 case 1:
                     color = Brushes.Red;
                     break;
 
-                // in the range
+                // 已连接
                 case 2:
                     color = Brushes.Green;
                     break;

@@ -13,14 +13,14 @@
         FontFamily="simsun"
         Title="材质检测PCBA生产测试工装上位机 V1.0.0" 
         Height="900" MinHeight="900"
-        Width="1600" MinWidth="1300"
+        Width="1200" MinWidth="1200"
         ResizeMode="CanResizeWithGrip"
         BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
         BorderThickness="1"
         WindowStartupLocation="CenterScreen"
         Loaded="MetroWindow_Loaded"
         Closed="MetroWindow_Closed" 
-                 WindowState="Maximized">
+                 WindowState="Normal">
 
     <mah:MetroWindow.Resources>
 
@@ -45,10 +45,18 @@
             <!--<viewmodel:viewModelConverter x:Key="viewModelConverter"/> -->
             <viewmodel:DevConnectForgConverter x:Key="DevConnectForgConverter"/>
             <viewmodel:DevConnectTextConverter x:Key="DevConnectTextConverter"/>
+            
             <viewmodel:EmptyCurrentForgConverter x:Key="EmptyCurrentForgConverter"/>
             
+            <viewmodel:JlinkProgForgConverter x:Key="JlinkProgForgConverter"/>
+            <viewmodel:JlinkProgTextConverter x:Key="JlinkProgTextConverter"/>
             
+            <viewmodel:FuncTestForgConverter x:Key="FuncTestForgConverter"/>
+            <viewmodel:FuncTestTextConverter x:Key="FuncTestTextConverter"/>
             
+            <viewmodel:BoardCurrentForgConverter x:Key="BoardCurrentForgConverter"/>
+            
+
         </ResourceDictionary>
     </mah:MetroWindow.Resources>
 
@@ -150,10 +158,10 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Content="Board 1 #"                   
+            <Label Grid.Row="0" Content="Block 1#"                   
                    Style="{DynamicResource DescriptionHeaderStyle}"/>
 
-            <Label Grid.Row="2" Content="Board 2 #"                   
+            <Label Grid.Row="2" Content="Block 2#"                   
                    Style="{DynamicResource DescriptionHeaderStyle}"/>
 
             <DataGrid Grid.Row="1" Margin="2"
@@ -170,7 +178,7 @@
                     TextOptions.TextFormattingMode="Display" 
                     GridLinesVisibility="Horizontal"
                     HorizontalContentAlignment="Center"
-                    RowHeight="50" CanUserSortColumns="False">
+                    RowHeight="45" CanUserSortColumns="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="序号" MinWidth="140" FontWeight="Bold"  IsReadOnly="True"                                     
                                         Binding="{Binding DevCnt}"/>
@@ -184,23 +192,115 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="空板电流" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"                                 
+                    <DataGridTextColumn Header="空板电流( mA )" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"                                 
                                         Binding="{Binding EmptyCurrent}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
-                                <Setter Property="Foreground" Value="{Binding EmptyCurrent, Converter={StaticResource EmptyCurrentForgConverter}}"/>
+                                <Setter Property="Foreground" Value="{Binding EmptyCurrentError, Converter={StaticResource EmptyCurrentForgConverter}}"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
                     <DataGridTextColumn Header="烧写程序" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
-                                        Binding="{Binding JlinkProg}"/>
+                                        Binding="{Binding JlinkProg, Converter={StaticResource JlinkProgTextConverter}}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding JlinkProg, Converter={StaticResource JlinkProgForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
                     <DataGridTextColumn Header="功能测试" MinWidth="140"  FontWeight="Bold"    IsReadOnly="True"                                  
-                                        Binding="{Binding FuncTest}"/>
+                                        Binding="{Binding FuncTest, Converter={StaticResource FuncTestTextConverter}}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding FuncTest, Converter={StaticResource FuncTestForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="运行电流" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
-                                        Binding="{Binding BoardCurrent}"/>
+                    <DataGridTextColumn Header="运行电流( mA )" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                                        Binding="{Binding BoardCurrent}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding BoardCurrentError, Converter={StaticResource BoardCurrentForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <DataGrid Grid.Row="3" Margin="2"
+                    ItemsSource="{Binding nodeDevInfoModels_two}"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="False"
+                    CanUserResizeRows="False"
+                    EnableColumnVirtualization="True"
+                    EnableRowVirtualization="False"
+                    RenderOptions.ClearTypeHint="Enabled"
+                    SelectionUnit="FullRow"
+                    TextOptions.TextFormattingMode="Display" 
+                    GridLinesVisibility="Horizontal"
+                    HorizontalContentAlignment="Center"
+                    RowHeight="45" CanUserSortColumns="False">
+
+                <!--<DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>-->
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="序号" MinWidth="140" FontWeight="Bold"  IsReadOnly="True"                                     
+                                        Binding="{Binding DevCnt}"/>
+
+                    <DataGridTextColumn Header="连接状态" MinWidth="140"   FontWeight="Bold"     IsReadOnly="True"                                
+                                        Binding="{Binding DevConnect, Converter={StaticResource DevConnectTextConverter}}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding DevConnect, Converter={StaticResource DevConnectForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="空板电流( mA )" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"                                 
+                                        Binding="{Binding EmptyCurrent}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding EmptyCurrentError, Converter={StaticResource EmptyCurrentForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="烧写程序" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                                        Binding="{Binding JlinkProg, Converter={StaticResource JlinkProgTextConverter}}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding JlinkProg, Converter={StaticResource JlinkProgForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="功能测试" MinWidth="140"  FontWeight="Bold"    IsReadOnly="True"                                  
+                                        Binding="{Binding FuncTest, Converter={StaticResource FuncTestTextConverter}}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding FuncTest, Converter={StaticResource FuncTestForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="运行电流( mA )" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                                        Binding="{Binding BoardCurrent}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding BoardCurrentError, Converter={StaticResource BoardCurrentForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
                 </DataGrid.Columns>
             </DataGrid>

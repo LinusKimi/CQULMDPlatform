@@ -8,8 +8,7 @@ namespace coordinateCtrlSys.ViewModel
 {
     public interface IConfigReader
     {
-        ConfigurationData ReadFile();
+        ConfigurationData ReadFile(string path);
 
-        void WriteFile(ConfigurationData s);
     }
 }

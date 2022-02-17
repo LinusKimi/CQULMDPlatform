@@ -232,9 +232,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="mapperClassModel.cs" />
+    <Compile Include="ViewModel\BoardCurrentForgConverter.cs" />
     <Compile Include="ViewModel\DevConnectForgConverter.cs" />
     <Compile Include="ViewModel\DevConnectTextConverter.cs" />
     <Compile Include="ViewModel\EmptyCurrentForgConverter.cs" />
+    <Compile Include="ViewModel\FuncTestForgConverter.cs" />
+    <Compile Include="ViewModel\FuncTestTextConverter.cs" />
+    <Compile Include="ViewModel\JlinkProgForgConverter.cs" />
+    <Compile Include="ViewModel\JlinkProgTextConverter.cs" />
     <Compile Include="ViewModel\nodeDevInfoModel.cs" />
     <Compile Include="particularNodeConfig.cs" />
     <Compile Include="ReadConfiguration.cs" />

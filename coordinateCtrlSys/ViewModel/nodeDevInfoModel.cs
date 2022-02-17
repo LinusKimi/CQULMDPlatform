@@ -18,6 +18,9 @@ namespace coordinateCtrlSys.ViewModel
         private float _EmptyCurrent = 0;
         public float EmptyCurrent { get => _EmptyCurrent; set { _EmptyCurrent = value; OnPropertyChanged("EmptyCurrent"); } }
 
+        private int _EmptyCurrentError = 0;
+        public int EmptyCurrentError { get => _EmptyCurrentError; set { _EmptyCurrentError = value; OnPropertyChanged("EmptyCurrentError"); } }
+
         private int _JlinkProg = 0;
         public int JlinkProg { get => _JlinkProg; set { _JlinkProg = value; OnPropertyChanged("JlinkProg"); } }
 
@@ -26,6 +29,9 @@ namespace coordinateCtrlSys.ViewModel
 
         private float _BoardCurrent = 0;
         public float BoardCurrent { get => _BoardCurrent; set { _BoardCurrent = value; OnPropertyChanged("BoardCurrent"); } }
+
+        private int _BoardCurrentError = 0;
+        public int BoardCurrentError { get => _BoardCurrentError; set { _BoardCurrentError = value; OnPropertyChanged("BoardCurrentError"); } }
 
 
         //public string NodeSocketID { get => _socketID; set { _socketID = value; OnPropertyChanged("NodeSocketID"); } }

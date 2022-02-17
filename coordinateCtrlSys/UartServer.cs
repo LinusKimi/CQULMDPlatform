@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace coordinateCtrlSys
 {
@@ -15,6 +16,8 @@ namespace coordinateCtrlSys
 
         private Logger _logger;
         private string[] _uartPortName;
+
+        private ActionBlock<byte[]> _actionBlock;
 
         private SerialPort serialPort;
 
@@ -39,7 +42,7 @@ namespace coordinateCtrlSys
         }
 
 
-        public UartServer(Logger logger)
+        public UartServer(Logger logger, ActionBlock<byte[]> actionBlock)
         {
             _logger = logger;
 
@@ -47,6 +50,7 @@ namespace coordinateCtrlSys
             serialPort.DataReceived += _serialPortDataRecv;
 
             PortName = SerialPort.GetPortNames();
+            _actionBlock = actionBlock;
         }
 
         public void CheckPort() => PortName = SerialPort.GetPortNames();

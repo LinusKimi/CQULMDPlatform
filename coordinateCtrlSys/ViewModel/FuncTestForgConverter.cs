@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace coordinateCtrlSys.ViewModel
 {
-    public class EmptyCurrentForgConverter : IValueConverter
+    public class FuncTestForgConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -22,14 +22,14 @@ namespace coordinateCtrlSys.ViewModel
                     color = Brushes.Blue;
                     break;
 
-                // out of range 
+                // 
                 case 1:
-                    color = Brushes.Red;
+                    color = Brushes.Green;
                     break;
 
-                // in the range
+                // 
                 case 2:
-                    color = Brushes.Green;
+                    color = Brushes.Red;
                     break;
 
                 default:

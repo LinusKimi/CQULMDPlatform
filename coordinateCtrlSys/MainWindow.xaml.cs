@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -35,6 +36,10 @@ namespace coordinateCtrlSys
 
         private MainViewModel _MainViewModel;
 
+        private ActionBlock<byte[]> _uartActionBlock;
+
+        private UartServer uartServer;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -48,6 +53,10 @@ namespace coordinateCtrlSys
 
             logger = container.Resolve<Logger>();
             _MainViewModel = container.Resolve<MainViewModel>();
+
+            _uartActionBlock = new ActionBlock<byte[]>(ProcessTask);
+            uartServer = new UartServer(logger, _uartActionBlock);
+
             DataContext = _MainViewModel;
         }
 
@@ -87,6 +96,11 @@ namespace coordinateCtrlSys
         }
 
         private void selectJsonFile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        public void ProcessTask(byte[] data)
         {
 
         }

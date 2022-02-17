@@ -18,22 +18,40 @@ namespace coordinateCtrlSys.ViewModel
         private string _boardInterface = "UART";
         public string boardInterface { get => _boardInterface; set { _boardInterface = value; RaisePropertyChanged(); } }
 
-        private bool _startProcess = false;
-        public bool startProcess { get => _startProcess; set { _startProcess = value; RaisePropertyChanged(); } }
+        
 
         public ObservableCollection<nodeDevInfoModel> nodeDevInfoModels_one { get; set; }
+        public ObservableCollection<nodeDevInfoModel> nodeDevInfoModels_two { get; set; }
 
         public MainViewModel()
         {
             nodeDevInfoModels_one = new ObservableCollection<nodeDevInfoModel>
             {
-                new nodeDevInfoModel{ DevCnt = 0 },
-                new nodeDevInfoModel{ DevCnt = 1 }
+                new nodeDevInfoModel{ DevCnt = 1 },
+                new nodeDevInfoModel{ DevCnt = 2 },
+                new nodeDevInfoModel{ DevCnt = 3 },
+                new nodeDevInfoModel{ DevCnt = 4 },
+                new nodeDevInfoModel{ DevCnt = 5 },
+                new nodeDevInfoModel{ DevCnt = 6 },
+                new nodeDevInfoModel{ DevCnt = 7 },
+                new nodeDevInfoModel{ DevCnt = 8 },
             };
 
+            nodeDevInfoModels_two = new ObservableCollection<nodeDevInfoModel>
+            {
+                new nodeDevInfoModel{ DevCnt = 1 },
+                new nodeDevInfoModel{ DevCnt = 2 },
+                new nodeDevInfoModel{ DevCnt = 3 },
+                new nodeDevInfoModel{ DevCnt = 4 },
+                new nodeDevInfoModel{ DevCnt = 5 },
+                new nodeDevInfoModel{ DevCnt = 6 },
+                new nodeDevInfoModel{ DevCnt = 7 },
+                new nodeDevInfoModel{ DevCnt = 8 },
+            };
 
         }
 
+        
        
     }
 }
