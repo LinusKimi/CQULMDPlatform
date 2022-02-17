@@ -15,6 +15,8 @@ namespace coordinateCtrlSys.ViewModel
         {
             var color = Brushes.Blue;
 
+            
+
             return color;
         }
 

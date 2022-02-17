@@ -18,6 +18,8 @@ namespace coordinateCtrlSys.ViewModel
         private string _boardInterface = "UART";
         public string boardInterface { get => _boardInterface; set { _boardInterface = value; RaisePropertyChanged(); } }
 
+        private bool _startProcess = false;
+        public bool startProcess { get => _startProcess; set { _startProcess = value; RaisePropertyChanged(); } }
 
         public ObservableCollection<nodeDevInfoModel> nodeDevInfoModels_one { get; set; }
 
