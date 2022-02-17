@@ -1,0 +1,212 @@
+﻿<mah:MetroWindow x:Class="coordinateCtrlSys.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:coordinateCtrlSys"
+        mc:Ignorable="d"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
+        xmlns:viewmodel="clr-namespace:coordinateCtrlSys.ViewModel" 
+        d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
+        FontFamily="simsun"
+        Title="材质检测PCBA生产测试工装上位机 V1.0.0" 
+        Height="900" MinHeight="900"
+        Width="1600" MinWidth="1300"
+        ResizeMode="CanResizeWithGrip"
+        BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+        BorderThickness="1"
+        WindowStartupLocation="CenterScreen"
+        Loaded="MetroWindow_Loaded"
+        Closed="MetroWindow_Closed" 
+                 WindowState="Maximized">
+
+    <mah:MetroWindow.Resources>
+
+        <ResourceDictionary>
+            <Style x:Key="LargeTileStyle" TargetType="mah:Tile">
+                <Setter Property="MinWidth" Value="290"/>
+                <Setter Property="MinHeight" Value="145"/>
+                <Setter Property="Margin" Value="4,3,1,3"/>
+                <Setter Property="HorizontalTitleAlignment" Value="Left"/>
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
+            </Style>
+            <Style x:Key="SmallTileStyle" TargetType="mah:Tile">
+                <Setter Property="MinWidth" Value="145"/>
+                <Setter Property="MinHeight" Value="145"/>
+                <Setter Property="Margin" Value="3"/>
+                <Setter Property="HorizontalTitleAlignment" Value="Left"/>
+                <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+                <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
+            </Style>
+            
+            <!--<viewmodel:viewModelConverter x:Key="viewModelConverter"/> -->
+            <viewmodel:DevConnectForgConverter x:Key="DevConnectForgConverter"/>
+            <viewmodel:DevConnectTextConverter x:Key="DevConnectTextConverter"/>
+            <viewmodel:EmptyCurrentForgConverter x:Key="EmptyCurrentForgConverter"/>
+            
+            
+            
+        </ResourceDictionary>
+    </mah:MetroWindow.Resources>
+
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="180"/>
+                <RowDefinition Height="160"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="3" Grid.Row="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="厂商" Grid.Column="0" 
+                                   Style="{DynamicResource DescriptionHeaderStyle}"/>
+                    <TextBox  Grid.Column="1"
+                                         Style="{DynamicResource MahApps.Styles.TextBox}"
+                                         Margin="10" Text="{Binding forFactory}"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center" 
+                                         FontWeight="Bold"
+                                         Height="30" IsReadOnly="True"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="生产版本" Grid.Column="0"
+                                   Style="{DynamicResource DescriptionHeaderStyle}"/>
+                    <TextBox  Grid.Column="1"
+                                         Style="{DynamicResource MahApps.Styles.TextBox}"
+                                         Margin="10" Text="{Binding PCBAVersion}"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center" 
+                                         FontWeight="Bold"
+                                         Height="30" IsReadOnly="True"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="通讯接口" Grid.Column="0"
+                                   Style="{DynamicResource DescriptionHeaderStyle}"/>
+                    <TextBox Grid.Column="1"
+                                         Style="{DynamicResource MahApps.Styles.TextBox}"
+                                         Margin="10" Text="{Binding boardInterface}"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center" 
+                                         FontWeight="Bold"
+                                         Height="30" IsReadOnly="True"/>
+                </Grid>
+
+            </StackPanel>
+
+            <WrapPanel Grid.Row="1" 
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top">
+                <mah:Tile x:Name="selectJsonFile" Title="选择配置文件" 
+                          Click="selectJsonFile_Click"
+                            mah:ControlsHelper.MouseOverBorderBrush="White"                       
+                            Style="{StaticResource SmallTileStyle}">
+
+                    <iconPacks:PackIconModern Width="40"
+                                                    Height="40"
+                                                    Kind="Settings" />
+                </mah:Tile>
+                <mah:Tile x:Name="configSystem" Title="启动系统" 
+                                      
+                        mah:ControlsHelper.MouseOverBorderBrush="White"                       
+                        Style="{StaticResource SmallTileStyle}">
+
+                    <iconPacks:PackIconModern Width="40"
+                                                    Height="40"
+                                                    Kind="NetworkPort" />
+                </mah:Tile>
+            </WrapPanel>
+
+            <ListBox x:Name="MsgBox" Grid.Row="2"/>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition MaxHeight="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition MaxHeight="40"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="Board 1 #"                   
+                   Style="{DynamicResource DescriptionHeaderStyle}"/>
+
+            <Label Grid.Row="2" Content="Board 2 #"                   
+                   Style="{DynamicResource DescriptionHeaderStyle}"/>
+
+            <DataGrid Grid.Row="1" Margin="2"
+                    ItemsSource="{Binding nodeDevInfoModels_one}"
+                    AutoGenerateColumns="False"
+                    CanUserAddRows="False"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="False"
+                    CanUserResizeRows="False"
+                    EnableColumnVirtualization="True"
+                    EnableRowVirtualization="False"
+                    RenderOptions.ClearTypeHint="Enabled"
+                    SelectionUnit="FullRow"
+                    TextOptions.TextFormattingMode="Display" 
+                    GridLinesVisibility="Horizontal"
+                    HorizontalContentAlignment="Center"
+                    RowHeight="50" CanUserSortColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="序号" MinWidth="140" FontWeight="Bold"  IsReadOnly="True"                                     
+                                        Binding="{Binding DevCnt}"/>
+
+                    <DataGridTextColumn Header="连接状态" MinWidth="140"   FontWeight="Bold"     IsReadOnly="True"                                
+                                        Binding="{Binding DevConnect, Converter={StaticResource DevConnectTextConverter}}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding DevConnect, Converter={StaticResource DevConnectForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="空板电流" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"                                 
+                                        Binding="{Binding EmptyCurrent}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding EmptyCurrent, Converter={StaticResource EmptyCurrentForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="烧写程序" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                                        Binding="{Binding JlinkProg}"/>
+
+                    <DataGridTextColumn Header="功能测试" MinWidth="140"  FontWeight="Bold"    IsReadOnly="True"                                  
+                                        Binding="{Binding FuncTest}"/>
+
+                    <DataGridTextColumn Header="运行电流" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                                        Binding="{Binding BoardCurrent}"/>
+
+                </DataGrid.Columns>
+            </DataGrid>
+
+
+        </Grid>
+
+    </Grid>
+</mah:MetroWindow>

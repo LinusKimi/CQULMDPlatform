@@ -1,0 +1,242 @@
+{
+  "systemConfig": {
+    "serverIP": "192.168.2.253",
+    "serverPort": "8000"
+  },
+  "ConfigurationNodeGroup": [
+    {
+      "NodeID": 0,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": "≤‚ ‘1∫≈",
+      "NodeIP": "192.168.2.100",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": {
+        "SelectNodeID": 0,
+        "SelectNodeName": "≤‚ ‘1∫≈",
+        "SelectNodeWorkPatter": 0,
+        "SecondarySourceOutputCnt": 2,
+        "SecondarySourceOutputChannel": [
+          0,
+          1
+        ],
+        "ErrorSensorCnt": 3,
+        "ErrorSensorList": [
+          0,
+          1,
+          2
+        ],
+        "FreqCnt": 2,
+        "FreqList": [
+          50.0,
+          100.0
+        ],
+        "FreqStep": [
+          0.05,
+          0.03
+        ],
+        "IdenRange": 0.03,
+        "MaxRange": 0.5
+      }
+    },
+    {
+      "NodeID": 1,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": "≤‚ ‘2∫≈",
+      "NodeIP": "192.168.2.101",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": {
+        "SelectNodeID": 1,
+        "SelectNodeName": "≤‚ ‘2∫≈",
+        "SelectNodeWorkPatter": 0,
+        "SecondarySourceOutputCnt": 2,
+        "SecondarySourceOutputChannel": [
+          0,
+          1
+        ],
+        "ErrorSensorCnt": 3,
+        "ErrorSensorList": [
+          0,
+          1,
+          2
+        ],
+        "FreqCnt": 2,
+        "FreqList": [
+          50.0,
+          100.0
+        ],
+        "FreqStep": [
+          0.05,
+          0.03
+        ],
+        "IdenRange": 0.0,
+        "MaxRange": 0.0
+      }
+    },
+    {
+      "NodeID": 2,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": null,
+      "NodeIP": "192.168.2.102",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": {
+        "SelectNodeID": 2,
+        "SelectNodeName": "121212",
+        "SelectNodeWorkPatter": 0,
+        "SecondarySourceOutputCnt": 2,
+        "SecondarySourceOutputChannel": [
+          0,
+          1
+        ],
+        "ErrorSensorCnt": 0,
+        "ErrorSensorList": [],
+        "FreqCnt": 0,
+        "FreqList": [],
+        "FreqStep": [],
+        "IdenRange": 0.0,
+        "MaxRange": 0.0
+      }
+    },
+    {
+      "NodeID": 3,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": null,
+      "NodeIP": "192.168.2.103",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": null
+    },
+    {
+      "NodeID": 4,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": null,
+      "NodeIP": "192.168.2.104",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": null
+    },
+    {
+      "NodeID": 5,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": null,
+      "NodeIP": "192.168.2.105",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": null
+    },
+    {
+      "NodeID": 6,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": null,
+      "NodeIP": "192.168.2.106",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": null
+    },
+    {
+      "NodeID": 7,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": null,
+      "NodeIP": "192.168.2.107",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": null
+    },
+    {
+      "NodeID": 8,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": null,
+      "NodeIP": "192.168.2.108",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": null
+    },
+    {
+      "NodeID": 9,
+      "NodeSocketID": "",
+      "NodeSelect": true,
+      "NodeName": null,
+      "NodeIP": "192.168.2.109",
+      "NodePort": "",
+      "NodeConnect": false,
+      "NodeWorkPattern": 3,
+      "NodeSelectSetting": null
+    }
+  ],
+  "NodeTemporaryParameters": [
+    {
+      "SelectNodeID": 0,
+      "SelectNodeName": "≤‚ ‘1∫≈",
+      "SelectNodeWorkPatter": 3,
+      "SecondarySourceOutputCnt": 2,
+      "SecondarySourceOutputChannel": [
+        0,
+        1
+      ],
+      "ErrorSensorCnt": 3,
+      "ErrorSensorList": [
+        0,
+        1,
+        2
+      ],
+      "FreqCnt": 2,
+      "FreqList": [
+        50.0,
+        100.0
+      ],
+      "FreqStep": [
+        0.05,
+        0.03
+      ],
+      "IdenRange": 0.03,
+      "MaxRange": 0.5
+    },
+    {
+      "SelectNodeID": 1,
+      "SelectNodeName": "≤‚ ‘2∫≈",
+      "SelectNodeWorkPatter": 3,
+      "SecondarySourceOutputCnt": 2,
+      "SecondarySourceOutputChannel": [
+        0,
+        1
+      ],
+      "ErrorSensorCnt": 3,
+      "ErrorSensorList": [
+        0,
+        1,
+        2
+      ],
+      "FreqCnt": 2,
+      "FreqList": [
+        50.0,
+        100.0
+      ],
+      "FreqStep": [
+        0.05,
+        0.03
+      ],
+      "IdenRange": 0.0,
+      "MaxRange": 0.0
+    }
+  ]
+}
