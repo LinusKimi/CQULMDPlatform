@@ -4,7 +4,7 @@
     "Factory": "YJ",
 
     // 软件版本
-    "SoftwareVersion": "",
+    "SoftwareVersion": "V_TestPlatform",
 
     // 下位机接口 IIC / UART
     "BoardInterface": "IIC",
@@ -32,6 +32,12 @@
     "ContinualCMD": "55 AA 0D 0C",
 
     // 停止连续
-    "StopContCMD": "55 AA 0D 0C"
+    "StopContCMD": "55 AA 0D 0C",
+
+    // 空板电流 [低, 高]
+    "EmptyCurrentValue": [ 0, 1 ],
+
+    // 运行电流 [低, 高]
+    "BoardCurrentValue": [ 0, 1 ]
   }
  }

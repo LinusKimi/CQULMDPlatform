@@ -9,22 +9,24 @@ namespace coordinateCtrlSys.ViewModel
     
     public class MainViewModel : ViewModelBase
     {
-        private string _forFactory = "HK";
+        private string _forFactory = "";
         public string forFactory { get => _forFactory; set { _forFactory = value; RaisePropertyChanged(); } }
 
-        private string _PCBAVersion = "V 2022-02-17";
+        private string _PCBAVersion = "";
         public string PCBAVersion { get => _PCBAVersion; set { _PCBAVersion = value; RaisePropertyChanged(); } }
 
-        private string _boardInterface = "UART";
+        private string _boardInterface = "";
         public string boardInterface { get => _boardInterface; set { _boardInterface = value; RaisePropertyChanged(); } }
 
-        
+        private IConfigReader _configReader;
+        public ConfigurationData configurationData;
 
         public ObservableCollection<nodeDevInfoModel> nodeDevInfoModels_one { get; set; }
         public ObservableCollection<nodeDevInfoModel> nodeDevInfoModels_two { get; set; }
 
-        public MainViewModel()
+        public MainViewModel(IConfigReader configReader)
         {
+            _configReader = configReader;
             nodeDevInfoModels_one = new ObservableCollection<nodeDevInfoModel>
             {
                 new nodeDevInfoModel{ DevCnt = 1 },
@@ -51,7 +53,14 @@ namespace coordinateCtrlSys.ViewModel
 
         }
 
-        
+        public void getSettingFile(string path)
+        {
+            // 两种方式  可扩展/
+            configurationData = _configReader.ReadFile(path);
+            forFactory = configurationData.systemConfig.Factory;
+            PCBAVersion = configurationData.systemConfig.SoftwareVersion;
+            boardInterface = configurationData.systemConfig.BoardInterface;
+        }
        
     }
 }

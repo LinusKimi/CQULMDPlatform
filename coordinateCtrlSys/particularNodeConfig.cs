@@ -7,55 +7,43 @@ using System.Threading.Tasks;
 
 namespace coordinateCtrlSys
 {
-    public class particularNodeConfig: INotifyPropertyChanged
+    public class particularNodeConfig : INotifyPropertyChanged
     {
-        // 被选中子控制器ID
-        private int _selectNodeID = 0;
-        public int SelectNodeID { get => _selectNodeID; set { _selectNodeID = value; OnPropertyChanged("SelectNodeID"); } }
+        // 单次检测指令
+        private string _singleCMD = "";
+        public string SignalCMD { 
+            get => _singleCMD; 
+            set { _singleCMD = value; OnPropertyChanged("SignalCMD"); } 
+        }
 
-        // 被选中子控制器名称
-        private string _selectNodeName = "";
-        public string SelectNodeName { get => _selectNodeName; set { _selectNodeName = value; OnPropertyChanged("SelectNodeName"); } }
+        private string _continualCMD = "";
+        public string ContinualCMD {
+            get => _continualCMD; 
+            set { _continualCMD = value; OnPropertyChanged("ContinualCMD"); } 
+        }
 
-        // 被选中子控制器工作模式  默认连续采样
-        private int _selectNodeWorkPatter = 3;
-        public int SelectNodeWorkPatter { get => _selectNodeWorkPatter; set { _selectNodeWorkPatter = value; OnPropertyChanged("SelectNodeWorkPatter"); } }
+        private string _stopContCMD = "";
+        public string StopContCMD { 
+            get => _stopContCMD; 
+            set { _stopContCMD = value; OnPropertyChanged("StopContCMD"); }
+        }
 
-        // 次级源数量
-        private int _secondarySourceOutputCnt = 0;
-        public int SecondarySourceOutputCnt { get => _secondarySourceOutputCnt; set { _secondarySourceOutputCnt = value; OnPropertyChanged("SecondarySourceOutputCnt"); } }
+        private List<float> _EmptyCurrentValue;
 
-        // 次级源编号
-        private List<int> _secondarySourceOutputChannel = new List<int> { };
-        public List<int> SecondarySourceOutputChannel { get => _secondarySourceOutputChannel; set { _secondarySourceOutputChannel = value; OnPropertyChanged("SecondarySourceOutputChannel"); } }
+        public List<float> EmptyCurrentValue
+        {
+            get { return _EmptyCurrentValue; }
+            set { _EmptyCurrentValue = value; OnPropertyChanged("EmptyCurrentValue"); }
+        }
 
-        // 误差传感器数量
-        private int _errorSensorCnt = 0;
-        public int ErrorSensorCnt { get => _errorSensorCnt;set { _errorSensorCnt = value; OnPropertyChanged("ErrorSensorCnt"); } }
+        private List<float> _BoardCurrentValue;
 
-        // 误差传感器编号
-        private List<int> _errorSensorList = new List<int> { };
-        public List<int> ErrorSensorList { get => _errorSensorList; set { _errorSensorList = value; OnPropertyChanged("ErrorSensorList"); } }
+        public List<float> BoardCurrentValue
+        {
+            get { return _BoardCurrentValue; }
+            set { _BoardCurrentValue = value; OnPropertyChanged("BoardCurrentValue"); }
+        }
 
-        // 频率个数
-        private int _freqCnt = 0;
-        public int FreqCnt { get=>_freqCnt; set { _freqCnt = value;OnPropertyChanged("FreqCnt"); } }
-
-        // 频率
-        private List<float> _freqList = new List<float> { };
-        public List<float> FreqList { get => _freqList;set { _freqList = value;OnPropertyChanged("FreqList"); } }
-
-        // 步长
-        private List<float> _freqStep = new List<float> { };
-        public List<float> FreqStep { get => _freqStep; set { _freqStep = value; OnPropertyChanged("FreqStep"); } }
-
-        // 辨识幅值
-        private float _idenRange = 0;
-        public float IdenRange { get => _idenRange; set { _idenRange = value; OnPropertyChanged("IdenRange"); } }
-
-        // 最大幅值
-        private float _maxRange = 0;
-        public float MaxRange { get => _maxRange; set { _maxRange = value; OnPropertyChanged("MaxRange"); } }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

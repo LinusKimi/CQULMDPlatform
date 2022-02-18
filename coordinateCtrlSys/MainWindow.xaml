@@ -42,6 +42,8 @@
                 <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
             </Style>
             
+            
+            
             <!--<viewmodel:viewModelConverter x:Key="viewModelConverter"/> -->
             <viewmodel:DevConnectForgConverter x:Key="DevConnectForgConverter"/>
             <viewmodel:DevConnectTextConverter x:Key="DevConnectTextConverter"/>
@@ -70,7 +72,7 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="180"/>
-                <RowDefinition Height="160"/>
+                <RowDefinition Height="310"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Margin="3" Grid.Row="0">
@@ -86,7 +88,7 @@
                                          Margin="10" Text="{Binding forFactory}"
                                          HorizontalContentAlignment="Center"
                                          VerticalContentAlignment="Center" 
-                                         FontWeight="Bold"
+                                         FontWeight="Bold" FontSize="16"
                                          Height="30" IsReadOnly="True"/>
                 </Grid>
 
@@ -102,7 +104,7 @@
                                          Margin="10" Text="{Binding PCBAVersion}"
                                          HorizontalContentAlignment="Center"
                                          VerticalContentAlignment="Center" 
-                                         FontWeight="Bold"
+                                         FontWeight="Bold" FontSize="16"
                                          Height="30" IsReadOnly="True"/>
                 </Grid>
 
@@ -118,7 +120,7 @@
                                          Margin="10" Text="{Binding boardInterface}"
                                          HorizontalContentAlignment="Center"
                                          VerticalContentAlignment="Center" 
-                                         FontWeight="Bold"
+                                         FontWeight="Bold" FontSize="16"
                                          Height="30" IsReadOnly="True"/>
                 </Grid>
 
@@ -132,22 +134,33 @@
                             mah:ControlsHelper.MouseOverBorderBrush="White"                       
                             Style="{StaticResource SmallTileStyle}">
 
-                    <iconPacks:PackIconModern Width="40"
-                                                    Height="40"
+                    <iconPacks:PackIconModern Width="60"
+                                                    Height="60"
                                                     Kind="Settings" />
                 </mah:Tile>
                 <mah:Tile x:Name="configSystem" Title="启动系统" 
-                                      
+                        Click="configSystem_Click"              
                         mah:ControlsHelper.MouseOverBorderBrush="White"                       
                         Style="{StaticResource SmallTileStyle}">
 
-                    <iconPacks:PackIconModern Width="40"
-                                                    Height="40"
+                    <iconPacks:PackIconModern Width="60"
+                                                    Height="60"
                                                     Kind="NetworkPort" />
                 </mah:Tile>
+
+                <mah:Tile x:Name="stopSystem" Title="停止系统" 
+                        Click="stopSystem_Click"              
+                        mah:ControlsHelper.MouseOverBorderBrush="White"                       
+                        Style="{StaticResource SmallTileStyle}">
+
+                    <iconPacks:PackIconModern Width="60"
+                                                    Height="60"
+                                                    Kind="NetworkPort" />
+                </mah:Tile>
+
             </WrapPanel>
 
-            <ListBox x:Name="MsgBox" Grid.Row="2"/>
+            <ListBox x:Name="MsgBox" Grid.Row="2" FontSize="16"/>
         </Grid>
 
         <Grid Grid.Column="1">
@@ -158,10 +171,10 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Content="Block 1#"                   
+            <Label Grid.Row="0" Content="Block 1#"  FontWeight="Bold"                 
                    Style="{DynamicResource DescriptionHeaderStyle}"/>
 
-            <Label Grid.Row="2" Content="Block 2#"                   
+            <Label Grid.Row="2" Content="Block 2#"  FontWeight="Bold"                   
                    Style="{DynamicResource DescriptionHeaderStyle}"/>
 
             <DataGrid Grid.Row="1" Margin="2"
@@ -178,12 +191,12 @@
                     TextOptions.TextFormattingMode="Display" 
                     GridLinesVisibility="Horizontal"
                     HorizontalContentAlignment="Center"
-                    RowHeight="45" CanUserSortColumns="False">
+                    RowHeight="45" CanUserSortColumns="False" >
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="序号" MinWidth="140" FontWeight="Bold"  IsReadOnly="True"                                     
+                    <DataGridTextColumn Header="序号" MinWidth="140"  FontWeight="Bold"  IsReadOnly="True"   FontSize="30"                                  
                                         Binding="{Binding DevCnt}"/>
 
-                    <DataGridTextColumn Header="连接状态" MinWidth="140"   FontWeight="Bold"     IsReadOnly="True"                                
+                    <DataGridTextColumn Header="连接状态" MinWidth="140"   FontWeight="Bold"     IsReadOnly="True"  FontSize="30"                              
                                         Binding="{Binding DevConnect, Converter={StaticResource DevConnectTextConverter}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -192,7 +205,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="空板电流( mA )" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"                                 
+                    <DataGridTextColumn Header="空板电流( mA )" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"    FontSize="30"                             
                                         Binding="{Binding EmptyCurrent}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -201,7 +214,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="烧写程序" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                    <DataGridTextColumn Header="烧写程序" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"         FontSize="30"                         
                                         Binding="{Binding JlinkProg, Converter={StaticResource JlinkProgTextConverter}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -210,7 +223,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="功能测试" MinWidth="140"  FontWeight="Bold"    IsReadOnly="True"                                  
+                    <DataGridTextColumn Header="功能测试" MinWidth="140"  FontWeight="Bold"    IsReadOnly="True"      FontSize="30"                            
                                         Binding="{Binding FuncTest, Converter={StaticResource FuncTestTextConverter}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -219,7 +232,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="运行电流( mA )" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                    <DataGridTextColumn Header="运行电流( mA )" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"    FontSize="30"                              
                                         Binding="{Binding BoardCurrent}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -254,10 +267,10 @@
                 </DataGrid.ColumnHeaderStyle>-->
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="序号" MinWidth="140" FontWeight="Bold"  IsReadOnly="True"                                     
+                    <DataGridTextColumn Header="序号" MinWidth="140" FontWeight="Bold"  IsReadOnly="True"   FontSize="30"                                  
                                         Binding="{Binding DevCnt}"/>
 
-                    <DataGridTextColumn Header="连接状态" MinWidth="140"   FontWeight="Bold"     IsReadOnly="True"                                
+                    <DataGridTextColumn Header="连接状态" MinWidth="140"   FontWeight="Bold"     IsReadOnly="True"       FontSize="30"                         
                                         Binding="{Binding DevConnect, Converter={StaticResource DevConnectTextConverter}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -266,7 +279,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="空板电流( mA )" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"                                 
+                    <DataGridTextColumn Header="空板电流( mA )" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"    FontSize="30"                             
                                         Binding="{Binding EmptyCurrent}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -275,7 +288,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="烧写程序" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                    <DataGridTextColumn Header="烧写程序" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"      FontSize="30"                            
                                         Binding="{Binding JlinkProg, Converter={StaticResource JlinkProgTextConverter}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -284,7 +297,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="功能测试" MinWidth="140"  FontWeight="Bold"    IsReadOnly="True"                                  
+                    <DataGridTextColumn Header="功能测试" MinWidth="140"  FontWeight="Bold"    IsReadOnly="True"    FontSize="30"                              
                                         Binding="{Binding FuncTest, Converter={StaticResource FuncTestTextConverter}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -293,7 +306,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="运行电流( mA )" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"                                  
+                    <DataGridTextColumn Header="运行电流( mA )" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"  FontSize="30"                                
                                         Binding="{Binding BoardCurrent}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
