@@ -34,6 +34,21 @@
     // 停止连续
     "StopContCMD": "55 AA 0D 0C",
 
+    // 内部版本
+    "InnerVersion": "55 AA 89 45",
+
+    // 复位指令 "" / null 代表没有该项
+    "ResetDev": "",
+
+    // AE 指令
+    "USEAE": "",
+
+    // EA 指令
+    "USEEA": "",
+
+    // 是否使用 AE/EA 指令
+    "EnableAEEA": false,
+
     // 空板电流 [低, 高]
     "EmptyCurrentValue": [ 0, 1 ],
 

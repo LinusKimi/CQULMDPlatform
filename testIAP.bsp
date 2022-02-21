@@ -6,9 +6,23 @@
     <BSSignal>
       <Name />
       <DataFormat>Hex</DataFormat>
-      <Data>eb 80 08 ba 01 00 00</Data>
+      <Data />
       <Latency>0</Latency>
       <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 01 00 61</Data>
+      <Latency>10</Latency>
+      <Active>true</Active>
     </BSSignal>
   </Signals>
 </BSSignalRegistry>

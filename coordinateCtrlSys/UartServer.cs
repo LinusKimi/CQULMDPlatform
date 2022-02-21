@@ -26,6 +26,12 @@ namespace coordinateCtrlSys
 
         private byte[] cmdHead = new byte[] { 0xEB, 0x80, 0x08, 0xBE};
 
+        private const int cmdHeadCnt = 4;
+
+        private const int cmdLenByteCnt = 2;
+
+        private const int cmdCRCByteCnt = 1;
+
         private int neadRecvLength = 0;
 
         public string[] PortName
@@ -113,8 +119,7 @@ namespace coordinateCtrlSys
                 serialPort.Write(data, 0, data.Length);
             }
             else
-            {
-                _logger.writeToFile("串口未打开！");
+            {               
                 _logger.writeToConsole("串口未打开！");
             }
         }
@@ -146,17 +151,19 @@ namespace coordinateCtrlSys
                         break;
                     else
                     {
-                        neadRecvLength = _uartrecvbuf[4] + _uartrecvbuf[5] * 256;
-                        int cmdLength = 4 + 2 + neadRecvLength;
+                        neadRecvLength = _uartrecvbuf[4] * 256 + _uartrecvbuf[5];
+                        int cmdLength = cmdHeadCnt + cmdLenByteCnt + neadRecvLength + cmdCRCByteCnt;
+
                         if (_uartrecvbuf.Count < cmdLength)
                             break;
                         else
                         {
                             byte[] data = new byte[cmdLength];
 
-                            for (int i = 0; i < data.Length; i++)
+                            Parallel.For ( 0, data.Length, i => {
                                 data[i] = _uartrecvbuf[i];
-
+                            }) ;
+                               
                             _actionBlock.Post(data);
                             _uartrecvbuf.RemoveRange(0, cmdLength);
                         }

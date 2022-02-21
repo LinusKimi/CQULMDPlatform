@@ -18,8 +18,8 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Autofac;
 using coordinateCtrlSys.ViewModel;
+using Crc;
 using MahApps.Metro.Controls;
-using NullFX.CRC;
 
 namespace coordinateCtrlSys
 {
@@ -42,7 +42,26 @@ namespace coordinateCtrlSys
 
         private UartServer uartServer;
 
+        private Crc8Base crc8 = new Crc8Base(0x07, 0x00, 0x00, false, false);
+
+        // bool value
+
+        private bool checkJlinkValue = false;
+
+        private bool MCUConnectValue = false;
+
+        private const int crcByteCnt = 1;
+
+        private enum cmdType { requestConnected = 0xfc , requestSettings = 0xae, requestJlink = 0xf0};
+        
+        
+        // ------------- 
+
         private int cmdcnt = 0;
+
+       
+
+
 
         public MainWindow()
         {
@@ -81,6 +100,8 @@ namespace coordinateCtrlSys
             _UITimer.IsEnabled = true;
             _UITimer.Tick += UITimer_timeout;
             _UITimer.Start();
+
+            checkJlink();
         }
 
         private void UITimer_timeout(object sender, EventArgs e)
@@ -104,6 +125,13 @@ namespace coordinateCtrlSys
             });
 
             logger.writeToFile(msg);
+        }
+
+        private void checkJlink()
+        {
+            // 检查 jlink
+
+            AddMsg("Check peripherals ...");
         }
 
         // 选择 配置文件
@@ -144,10 +172,61 @@ namespace coordinateCtrlSys
             Console.WriteLine("recv data length: " + data.Length + " cmdcnt: " + cmdcnt);
             Console.WriteLine(" ThreadId:" + Thread.CurrentThread.ManagedThreadId + " Execute Time:" + DateTime.Now);
 
-            var crcTemp = Crc8.ComputeChecksum(data, 0, data.Length - 2);
+            // 数据校验
+
+            var _dataTemp = new byte[data.Length - crcByteCnt];
+            Parallel.For(0, _dataTemp.Length, i => {
+                _dataTemp[i] = data[i];
+            });
+
+            crc8.AutoReset = true;
+            var crcTemp = crc8.ComputeHash(_dataTemp);
+
+            if (crcTemp[0] == data[data.Length - 1])
+            {
+                Console.WriteLine("cmd data check successed !");
+            }
+            else
+            {
+                Console.WriteLine("cmd data check failed !");
+                return;
+            }
+
+            // 数据解析
+
+            switch ((cmdType)data[6])
+            {
+                case cmdType.requestConnected:
+                    RequestConnectedTask();
+                    break;
+
+                case cmdType.requestJlink:
+                    
+                    break;
+
+                default:
+
+                    break;
+            }
 
         }
 
+        public void RequestConnectedTask()
+        {
+            byte[] _t = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x01, 0xcf};
+            byte[] _responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x01, 0xcf, 0x00 };
+
+            var _tcrc = crc8.ComputeHash(_t);
+            _responseData[7] = _tcrc[0];
+            uartServer.SendData(_responseData);
+
+            MCUConnectValue = true;
+        }
+
+        public void DifferJlink()
+        { 
+            
+        }
         public void EmptyCurrentTask(int blocknum, int boardnum, float value)
         {
 
@@ -157,6 +236,7 @@ namespace coordinateCtrlSys
         {
 
         }
+
 
 
 
