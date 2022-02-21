@@ -41,10 +41,10 @@
                 <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
                 <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
             </Style>
+
+
+            <viewmodel:PortOpenedResetConverter x:Key="PortOpenedResetConverter"/>
             
-            
-            
-            <!--<viewmodel:viewModelConverter x:Key="viewModelConverter"/> -->
             <viewmodel:DevConnectForgConverter x:Key="DevConnectForgConverter"/>
             <viewmodel:DevConnectTextConverter x:Key="DevConnectTextConverter"/>
             
@@ -132,7 +132,9 @@
                 <mah:Tile x:Name="selectJsonFile" Title="选择配置文件" 
                           Click="selectJsonFile_Click"
                             mah:ControlsHelper.MouseOverBorderBrush="White"                       
-                            Style="{StaticResource SmallTileStyle}">
+                            Style="{StaticResource SmallTileStyle}"
+                            IsEnabled="{Binding portOpend, Converter={StaticResource PortOpenedResetConverter}}"
+                          >
 
                     <iconPacks:PackIconModern Width="60"
                                                     Height="60"
@@ -141,7 +143,9 @@
                 <mah:Tile x:Name="configSystem" Title="启动系统" 
                         Click="configSystem_Click"              
                         mah:ControlsHelper.MouseOverBorderBrush="White"                       
-                        Style="{StaticResource SmallTileStyle}">
+                        Style="{StaticResource SmallTileStyle}"
+                        IsEnabled="{Binding portOpend, Converter={StaticResource PortOpenedResetConverter}}"  
+                          >
 
                     <iconPacks:PackIconModern Width="60"
                                                     Height="60"
@@ -151,7 +155,9 @@
                 <mah:Tile x:Name="stopSystem" Title="停止系统" 
                         Click="stopSystem_Click"              
                         mah:ControlsHelper.MouseOverBorderBrush="White"                       
-                        Style="{StaticResource SmallTileStyle}">
+                        Style="{StaticResource SmallTileStyle}"
+                        IsEnabled="{Binding portOpend}"  
+                          >
 
                     <iconPacks:PackIconModern Width="60"
                                                     Height="60"

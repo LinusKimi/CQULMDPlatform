@@ -18,6 +18,10 @@ namespace coordinateCtrlSys.ViewModel
         private string _boardInterface = "";
         public string boardInterface { get => _boardInterface; set { _boardInterface = value; RaisePropertyChanged(); } }
 
+        private bool _portOpened = false;
+        public bool portOpend{get => _portOpened;  set { _portOpened = value; RaisePropertyChanged(); }}
+
+
         private IConfigReader _configReader;
         public ConfigurationData configurationData;
 

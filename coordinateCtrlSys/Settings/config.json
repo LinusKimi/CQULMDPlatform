@@ -29,30 +29,30 @@
     "SignalCMD": "55 AA 0D 0C",
 
     // 连续指令
-    "ContinualCMD": "55 AA 0D 0C",
+    //"ContinualCMD": "55 AA 0D 0C",
 
     // 停止连续
-    "StopContCMD": "55 AA 0D 0C",
+    //"StopContCMD": "55 AA 0D 0C",
 
     // 内部版本
     "InnerVersion": "55 AA 89 45",
 
     // 复位指令 "" / null 代表没有该项
-    "ResetDev": "",
+    "ResetDev": "55 AA FF FF",
 
     // AE 指令
-    "USEAE": "",
+    "USEAE": "55 AA AE FF",
 
     // EA 指令
-    "USEEA": "",
+    //"USEEA": "",
 
     // 是否使用 AE/EA 指令
     "EnableAEEA": false,
 
     // 空板电流 [低, 高]
-    "EmptyCurrentValue": [ 0, 1 ],
+    "EmptyCurrentValue": [ 0.0, 30.0 ],
 
     // 运行电流 [低, 高]
-    "BoardCurrentValue": [ 0, 1 ]
+    "BoardCurrentValue": [ 0.0, 30.0 ]
   }
  }

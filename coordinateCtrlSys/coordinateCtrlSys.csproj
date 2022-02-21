@@ -251,6 +251,7 @@
     <Compile Include="ViewModel\ConfigurationData.cs" />
     <Compile Include="ViewModel\IConfigReader.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\PortOpenedResetConverter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -286,6 +287,9 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="InnerShell\lsJlinkPort.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Settings\config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -301,5 +305,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

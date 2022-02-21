@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -20,6 +22,7 @@ using Autofac;
 using coordinateCtrlSys.ViewModel;
 using Crc;
 using MahApps.Metro.Controls;
+using Microsoft.Win32;
 
 namespace coordinateCtrlSys
 {
@@ -44,6 +47,8 @@ namespace coordinateCtrlSys
 
         private Crc8Base crc8 = new Crc8Base(0x07, 0x00, 0x00, false, false);
 
+        private const string DefaultPortName = "COM3";
+
         // bool value
 
         private bool checkJlinkValue = false;
@@ -52,7 +57,15 @@ namespace coordinateCtrlSys
 
         private const int crcByteCnt = 1;
 
-        private enum cmdType { requestConnected = 0xfc , requestSettings = 0xae, requestJlink = 0xf0};
+        private enum cmdType {
+            // 响应下位机连接
+            requestConnected = 0xfc ,
+            
+            // 下位机获取系统配置
+            requestSettings = 0xae,
+            
+            // Jlink 区分
+            requestJlink = 0xf0};
         
         
         // ------------- 
@@ -92,7 +105,7 @@ namespace coordinateCtrlSys
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            AddMsg("Start Application");
+            AddMsg("启动应用");
 
             _UITimer = new DispatcherTimer();
 
@@ -111,7 +124,7 @@ namespace coordinateCtrlSys
 
         private void MetroWindow_Closed(object sender, EventArgs e)
         {
-            AddMsg("Stop Application");
+            AddMsg("关闭应用");
         }
 
         private void AddMsg(string msg)
@@ -130,30 +143,76 @@ namespace coordinateCtrlSys
         private void checkJlink()
         {
             // 检查 jlink
+            AddMsg("检查外设中 ...");
 
-            AddMsg("Check peripherals ...");
+            var lsjlinkbatpath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\lsJlinkPort.bat";
+
+            string text = "echo helloworld";
+            
+            File.WriteAllText(lsjlinkbatpath, text);
+            
+
+            var proc = new Process();
+            proc.StartInfo.FileName = lsjlinkbatpath;
+            proc.StartInfo.CreateNoWindow = false;
+            
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
+            proc.StartInfo.UseShellExecute = false;
+
+            proc.Start();
+            proc.WaitForExit(5);
+            
+            string processOut = proc.StandardOutput.ReadToEnd();
+            string processError = proc.StandardError.ReadToEnd();
+
+            proc.Close();
+
+            if (string.Empty != processError)
+            {
+                AddMsg("外设检查指令执行失败");
+            }
+            else
+            {
+                AddMsg("外设检查指令执行成功");
+            }
+
         }
 
         // 选择 配置文件
         private void selectJsonFile_Click(object sender, RoutedEventArgs e)
         {
-            _MainViewModel.getSettingFile("./Settings/config.json");
-
-            if (uartServer.OpenPort("COM3"))
+            var openFileDialg = new OpenFileDialog()
             {
-                AddMsg("Port open sucessed ");
-            }
-            else
-            {
-                AddMsg("Port open failed");
-            }
+                InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Settings\\",
+                Filter = "json file(*json)|*.json",
+                Title = "配置文件选择"
+            };
 
+            var selectResult = openFileDialg.ShowDialog();
+
+            if (selectResult != true) return;
+
+            var filePath = openFileDialg.FileName;
+
+            _MainViewModel.getSettingFile(filePath);
+
+            AddMsg("成功加载配置文件");
         }
 
         // 配置系统 开始运行
         private void configSystem_Click(object sender, RoutedEventArgs e)
         {
-            uartServer.SendData(new byte[] { 0x01 });
+            if (uartServer.OpenPort(DefaultPortName))
+            {
+                _MainViewModel.portOpend = true;
+                AddMsg("成功打开通讯接口");
+            }
+            else
+            {
+                _MainViewModel.portOpend = false;
+                AddMsg("通讯接口打开失败");
+            }
         }
 
         // 停止系统响应
@@ -163,6 +222,8 @@ namespace coordinateCtrlSys
             {
                 uartServer.ClosePort();
             }
+
+            _MainViewModel.portOpend = false;
         }
 
         private void ProcessTask(byte[] data)
@@ -211,6 +272,7 @@ namespace coordinateCtrlSys
 
         }
 
+        
         public void RequestConnectedTask()
         {
             byte[] _t = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x01, 0xcf};

@@ -34,14 +34,6 @@ namespace coordinateCtrlSys.ViewModel
         public int BoardCurrentError { get => _BoardCurrentError; set { _BoardCurrentError = value; OnPropertyChanged("BoardCurrentError"); } }
 
 
-        //public string NodeSocketID { get => _socketID; set { _socketID = value; OnPropertyChanged("NodeSocketID"); } }
-        //public bool NodeSelect { get => _select; set { _select = value; OnPropertyChanged("NodeSelect"); } }
-        //public string NodeName { get => _name; set { _name = value; OnPropertyChanged("NodeName"); } }
-        //public string NodeIP { get => _ip; set { _ip = value; OnPropertyChanged("NodeIP"); } }
-        //public string NodePort { get => _port; set { _port = value; OnPropertyChanged("NodePort"); } }
-        //public bool NodeConnect { get => _connect; set { _connect = value; OnPropertyChanged("NodeConnect"); } }
-        //public int NodeWorkPattern { get => _workPattern; set { _workPattern = value; OnPropertyChanged("NodeWorkPattern"); } }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
