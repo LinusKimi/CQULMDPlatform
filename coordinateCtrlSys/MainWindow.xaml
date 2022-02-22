@@ -13,7 +13,7 @@
         FontFamily="simsun"
         Title="材质检测PCBA生产测试工装上位机 V1.0.0" 
         Height="900" MinHeight="900"
-        Width="1200" MinWidth="1200"
+        Width="1350" MinWidth="1350"
         ResizeMode="CanResizeWithGrip"
         BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
         BorderThickness="1"
@@ -229,6 +229,15 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
+                    <DataGridTextColumn Header="软件版本" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"  FontSize="30"                         
+                                        Binding="{Binding NodeVersion}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding VersionErr, Converter={StaticResource EmptyCurrentForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
                     <DataGridTextColumn Header="功能测试" MinWidth="140"  FontWeight="Bold"    IsReadOnly="True"      FontSize="30"                            
                                         Binding="{Binding FuncTest, Converter={StaticResource FuncTestTextConverter}}">
                         <DataGridTextColumn.ElementStyle>
@@ -299,6 +308,15 @@
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Foreground" Value="{Binding JlinkProg, Converter={StaticResource JlinkProgForgConverter}}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="软件版本" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"  FontSize="30"                         
+                                        Binding="{Binding NodeVersion}">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="{Binding VersionErr, Converter={StaticResource EmptyCurrentForgConverter}}"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>

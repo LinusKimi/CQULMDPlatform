@@ -65,6 +65,154 @@ namespace coordinateCtrlSys.ViewModel
             PCBAVersion = configurationData.systemConfig.SoftwareVersion;
             boardInterface = configurationData.systemConfig.BoardInterface;
         }
-       
+
+        public void StartStatus()
+        {
+            foreach (var item in nodeDevInfoModels_one)
+            {
+                item.DevConnect = 0;
+                item.EmptyCurrent = 0;
+                item.EmptyCurrentError = 0;
+                item.JlinkProg = 0;
+                item.NodeVersion = "-";
+                item.VersionErr = 0;
+                item.FuncTest = 0;
+                item.BoardCurrent = 0;
+                item.BoardCurrentError = 0;
+            }
+
+            foreach (var item in nodeDevInfoModels_two)
+            {
+                item.DevConnect = 0;
+                item.EmptyCurrent = 0;
+                item.EmptyCurrentError = 0;
+                item.JlinkProg = 0;
+                item.FuncTest = 0;
+                item.BoardCurrent = 0;
+                item.BoardCurrentError = 0;
+            }
+        }
+
+        public void nodeConnectStatus(int block, int nodeNo, bool status)
+        {
+            if (block == 0)
+            {
+                foreach (var item in nodeDevInfoModels_one)
+                {
+                    if (item.DevCnt == nodeNo)
+                        item.DevConnect = status ? 0 : 1;
+                }
+            }
+
+            if (block == 1)
+            {
+                foreach (var item in nodeDevInfoModels_two)
+                {
+                    if (item.DevCnt == nodeNo)
+                        item.DevConnect = status ? 0 : 1;
+                }
+            }
+        }
+
+        public void nodeShortOutStatus(int block, int nodeNo, int status)
+        {
+            if (block == 0)
+            {
+                foreach (var item in nodeDevInfoModels_one)
+                {
+                    if (item.DevCnt == nodeNo)
+                        item.DevConnect = status;
+                }
+            }
+
+            if (block == 1)
+            {
+                foreach (var item in nodeDevInfoModels_two)
+                {
+                    if (item.DevCnt == nodeNo)
+                        item.DevConnect = status;
+                }
+            }
+        }
+
+        public void nodeVersionStatus(int block, int nodeNo, bool vE, byte[] data)
+        {
+            if (block == 0)
+            {
+                foreach (var item in nodeDevInfoModels_one)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        if (vE)
+                        {
+                            item.VersionErr = 1;
+                            item.NodeVersion = "³¬Ê±";
+                        }
+                        else
+                        {
+                            item.VersionErr = 2;
+                            item.NodeVersion = System.Text.Encoding.ASCII.GetString(data);
+                        }
+                    }
+
+                }
+            }
+
+            if (block == 1)
+            {
+                foreach (var item in nodeDevInfoModels_two)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        if (vE)
+                        {
+                            item.VersionErr = 1;
+                            item.NodeVersion = "³¬Ê±";
+                        }
+                        else
+                        {
+                            item.VersionErr = 2;
+                            item.NodeVersion = System.Text.Encoding.ASCII.GetString(data);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        public void nodeEmptyCurrentStatus(int block, int nodeNo, bool flag, float data)
+        {
+            if (block == 0)
+            {
+                foreach (var item in nodeDevInfoModels_one)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        item.EmptyCurrent = data;
+                        item.EmptyCurrentError = flag ? 2 : 1;
+                    }
+
+                }
+            }
+
+            if (block == 1)
+            {
+                foreach (var item in nodeDevInfoModels_two)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        item.EmptyCurrent = data;
+                        item.EmptyCurrentError = flag ? 2 : 1;
+                    }
+                }
+            }
+
+        }
+
+
+
+
+
+
     }
 }

@@ -27,21 +27,14 @@
     <BSSignal>
       <Name>JTAG （Number） Set</Name>
       <DataFormat>Hex</DataFormat>
-      <Data>eb 80 08 be 00 01 f0 </Data>
+      <Data>eb 80 08 be 00 03 f0 00 01 9D</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name>JTAG （Number） Reset</Name>
+      <Name>JTAG （Number） Reset  该指令不需要使用</Name>
       <DataFormat>Hex</DataFormat>
-      <Data>eb 80 08 be 00 01 f0 </Data>
-      <Latency>0</Latency>
-      <Active>false</Active>
-    </BSSignal>
-    <BSSignal>
-      <Name />
-      <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>eb 80 08 be 00 03 f0 00 00 9A</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -53,9 +46,9 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name />
+      <Name>开始测试状态报告</Name>
       <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>eb 80 08 be 00 02 CA DA 47</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -67,9 +60,16 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name />
+      <Name>压板到位</Name>
       <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>eb 80 08 be 00 03 CA D0 01 41</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>压板 不到位</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 03 CA D0 00 46</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -81,9 +81,9 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name />
+      <Name>节点连接状态</Name>
       <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>eb 80 08 be 00 04 CA 91 06 00 6F</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -95,9 +95,9 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name />
+      <Name>节点短路状态</Name>
       <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>eb 80 08 be 00 04 CA 92 06 01 D5</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>

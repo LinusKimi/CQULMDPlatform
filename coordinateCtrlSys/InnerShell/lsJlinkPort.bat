@@ -1,1 +1,2 @@
-﻿echo hello 
+﻿echo start 
+jlink.exe -CommandFile lsPort.jlink

@@ -24,6 +24,13 @@ namespace coordinateCtrlSys.ViewModel
         private int _JlinkProg = 0;
         public int JlinkProg { get => _JlinkProg; set { _JlinkProg = value; OnPropertyChanged("JlinkProg"); } }
 
+        private string _nodeVersion = "-";
+        public string NodeVersion { get => _nodeVersion; set { _nodeVersion = value; OnPropertyChanged("NodeVersion"); } }
+
+        private int _versionErr = 0;
+
+        public int VersionErr { get => _versionErr; set { _versionErr = value; OnPropertyChanged("VersionErr"); } }       
+
         private int _FuncTest = 0;
         public int FuncTest { get => _FuncTest; set { _FuncTest = value; OnPropertyChanged("FuncTest"); } }
 

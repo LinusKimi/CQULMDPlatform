@@ -32,6 +32,11 @@ namespace coordinateCtrlSys.ViewModel
                     color = Brushes.Green;
                     break;
 
+                // 节点短路
+                case 3:
+                    color = Brushes.Red;
+                    break;
+
                 default:
                     break;
             }

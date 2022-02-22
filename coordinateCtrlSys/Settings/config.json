@@ -22,7 +22,7 @@
     "FlashAddress": "0x0000000",
 
     // 烧结文件名
-    "BinFileName": ".bin"
+    "BinFileName": "test.bin"
   },
   "ConfigurationNode": {
     // 单次指令

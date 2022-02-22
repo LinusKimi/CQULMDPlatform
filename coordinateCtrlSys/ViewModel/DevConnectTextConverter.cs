@@ -28,6 +28,10 @@ namespace coordinateCtrlSys.ViewModel
                     connect = "连接";
                     break;
 
+                case 3:
+                    connect = "短路";
+                    break;
+
                 default:
                     break;
             }
