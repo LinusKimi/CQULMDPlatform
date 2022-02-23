@@ -156,7 +156,7 @@ namespace coordinateCtrlSys
             //_UITimer.Tick += UITimer_timeout;
             //_UITimer.Start();
 
-            checkJlink();
+            checkJlinkTask();
         }
 
         private void UITimer_timeout(object sender, EventArgs e)
@@ -183,7 +183,7 @@ namespace coordinateCtrlSys
             logger.writeToFile(msg);
         }
 
-        private void checkJlink()
+        private void checkJlinkTask()
         {
             // 检查 jlink
             AddMsg("检查外设中 ...");
@@ -240,6 +240,7 @@ namespace coordinateCtrlSys
                 AddMsg("外设自检执行成功");
 
                 checkJlinkValue = true;
+                checkJlink.Visibility = Visibility.Collapsed;
             }
             else
             {
@@ -247,9 +248,21 @@ namespace coordinateCtrlSys
             }
         }
 
+        // 检查 J_Link
+        private void checkJlink_Click(object sender, RoutedEventArgs e)
+        {
+            checkJlinkTask();
+        }
+
         // 选择 配置文件
         private void selectJsonFile_Click(object sender, RoutedEventArgs e)
         {
+            if (!checkJlinkValue)
+            {
+                AddMsg("请检查JLink设备连接");
+                return;
+            }
+
             var openFileDialg = new OpenFileDialog()
             {
                 InitialDirectory = AppDomain.CurrentDomain.BaseDirectory + "Settings\\",
@@ -267,6 +280,7 @@ namespace coordinateCtrlSys
 
             // 判断 配置项
             string binPath = AppDomain.CurrentDomain.BaseDirectory + "FlashBin\\" + _MainViewModel.configurationData.systemConfig.BinFileName;
+           
 
             if (!File.Exists(binPath))
             {               
@@ -455,10 +469,6 @@ namespace coordinateCtrlSys
 
         }
        
-
-
-
-
         // 请求连接
         public void RequestConnectedTask()
         {
@@ -648,7 +658,7 @@ namespace coordinateCtrlSys
 
                     _MainViewModel.nodeConnectStatus((nodeNumber / 8), (nodeNumber % 8 + 1), nodeConnectFlag);
 
-                    AddMsg("Block " + (nodeNumber / 8 + 1) + "# No. " + (nodeNumber % 8 + 1) + (nodeConnectFlag ? " ":" 未") + "连接");
+                    AddMsg("Block " + (nodeNumber / 8 + 1) + "# No. " + (nodeNumber % 8 + 1) + (nodeConnectFlag ? " " : " 未") + "连接");
                     break;
 
                 case msgType.nodeShortOut:
@@ -664,12 +674,17 @@ namespace coordinateCtrlSys
                 case msgType.nodeVersion:
                     int nodeVersion = (ushort)requestData[8];
 
+                    string _version = Encoding.ASCII.GetString(requestData, 9, requestData.Length - 9);
+
+                    _MainViewModel.nodeVersionStatus((nodeVersion / 8 + 1), (nodeVersion % 8 + 1), false, _version.Substring(_version.Length - 4, 4));
+
                     break;
 
                 case msgType.nodeVersionErr:
                     int nodeVersionErr = (ushort)requestData[8];
 
-                    _MainViewModel.nodeVersionStatus();
+                    _MainViewModel.nodeVersionStatus((nodeVersionErr / 8 + 1), (nodeVersionErr % 8 + 1), true, "超时");
+
                     break;
 
                 default:
@@ -763,7 +778,7 @@ namespace coordinateCtrlSys
                 uartServer.SendData(responseData);
 
                 _MainViewModel.jlinkProgStatus((blockNumber == 0 ? 0 : 1), (nodeNumber % 8 + 1), true);
-                AddMsg("Block " + (blockNumber + 1) + " NO." + (nodeNumber % 8 + 1) + " 烧写成功");
+                AddMsg("Block " + (blockNumber + 1) + " NO."+ (nodeNumber % 8 + 1) + " 烧写成功");
 
                 return;
             }
@@ -842,7 +857,7 @@ namespace coordinateCtrlSys
         // 上报 ADC数据
         public void putRealADCDataTask(byte[] requestData)
         {
-            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x5E, (requestData[7]), 0x00, 0x00};
+            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x5E, (requestData[7]), 0x00, 0x00 };
 
             // 地址修改
             if ((requestData.Length != (PostADCDataCnt * 2)) || requestData[PostADCDataCnt * 2 + 1] == 0xEB)
@@ -857,13 +872,15 @@ namespace coordinateCtrlSys
 
             float[] adcData = new float[PostADCDataCnt];
 
-            Parallel.For(0, PostADCDataCnt, i=> {
+            Parallel.For(0, PostADCDataCnt, i =>
+            {
                 adcData[i] = BitConverter.ToSingle(requestData, i * 4 + 8);
             });
 
             float[] peakValue = new float[4];
             float[] peakIndex = new float[4];
-            Parallel.For(0, 4, n=> { 
+            Parallel.For(0, 4, n =>
+            {
                 
             });
 
@@ -874,10 +891,20 @@ namespace coordinateCtrlSys
 
         // ADC 数据异常报告
         public void putADCStatusTask(byte[] requestData)
-        { 
-            
+        {
+            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x5C, (requestData[7]), 0x00, 0x00 };
+
+            int nodeNumber = requestData[7];
+
+            responseData[8] = 0x01;
+            responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+            uartServer.SendData(responseData);
+
+            _MainViewModel.funTestTask((nodeNumber / 8 + 1), (nodeNumber % 8 + 1), false);
+
+            AddMsg("Block "+ (nodeNumber / 8 + 1) + " # No. " + (nodeNumber % 8 + 1) + " ADC OR/UR");
         }
 
-
+        
     }
 }

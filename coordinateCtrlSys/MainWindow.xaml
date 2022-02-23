@@ -129,6 +129,17 @@
             <WrapPanel Grid.Row="1" 
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Top">
+                
+                <mah:Tile x:Name="checkJlink" Title="外设自检"  
+                          Click="checkJlink_Click"
+                            mah:ControlsHelper.MouseOverBorderBrush="White"                       
+                            Style="{StaticResource SmallTileStyle}"                           
+                          >
+
+                    <iconPacks:PackIconModern Width="60"
+                                                    Height="60"
+                                                    Kind="ConfirmYesNo" />
+                </mah:Tile>
                 <mah:Tile x:Name="selectJsonFile" Title="选择配置文件" 
                           Click="selectJsonFile_Click"
                             mah:ControlsHelper.MouseOverBorderBrush="White"                       

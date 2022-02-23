@@ -57,6 +57,7 @@ namespace coordinateCtrlSys.ViewModel
 
         }
 
+        // 解析配置
         public void getSettingFile(string path)
         {
             // 两种方式  可扩展/
@@ -72,6 +73,7 @@ namespace coordinateCtrlSys.ViewModel
                 boardInterface = _t + " / " + configurationData.systemConfig.UARTBaud;
         }
 
+        // 开始测试
         public void StartStatus()
         {
             foreach (var item in nodeDevInfoModels_one)
@@ -99,6 +101,7 @@ namespace coordinateCtrlSys.ViewModel
             }
         }
 
+        // 节点 连接状态
         public void nodeConnectStatus(int block, int nodeNo, bool status)
         {
             if (block == 0)
@@ -120,6 +123,7 @@ namespace coordinateCtrlSys.ViewModel
             }
         }
 
+        // 节点短路状态
         public void nodeShortOutStatus(int block, int nodeNo, int status)
         {
             if (block == 0)
@@ -141,52 +145,7 @@ namespace coordinateCtrlSys.ViewModel
             }
         }
 
-        public void nodeVersionStatus(int block, int nodeNo, bool vE, byte[] data = null)
-        {
-            if (block == 0)
-            {
-                foreach (var item in nodeDevInfoModels_one)
-                {
-                    if (item.DevCnt == nodeNo)
-                    {
-                        if (vE)
-                        {
-                            item.VersionErr = 1;
-                            item.NodeVersion = "超时";
-                        }
-                        else
-                        {
-                            item.VersionErr = 2;
-                            item.NodeVersion = System.Text.Encoding.ASCII.GetString(data);
-                        }
-                    }
-
-                }
-            }
-
-            if (block == 1)
-            {
-                foreach (var item in nodeDevInfoModels_two)
-                {
-                    if (item.DevCnt == nodeNo)
-                    {
-                        if (vE)
-                        {
-                            item.VersionErr = 1;
-                            item.NodeVersion = "超时";
-                        }
-                        else
-                        {
-                            item.VersionErr = 2;
-                            item.NodeVersion = System.Text.Encoding.ASCII.GetString(data);
-                        }
-                    }
-                }
-            }
-
-        }
-
-
+        // 空板电流
         public void nodeEmptyCurrentStatus(int block, int nodeNo, bool flag, float data)
         {
             if (block == 0)
@@ -216,6 +175,7 @@ namespace coordinateCtrlSys.ViewModel
 
         }
 
+        // 烧写 bin
         public void jlinkProgStatus(int block, int nodeNo, bool flag)
         {
             if (block == 0)
@@ -243,6 +203,53 @@ namespace coordinateCtrlSys.ViewModel
 
         }
 
+        // 节点版本号
+        public void nodeVersionStatus(int block, int nodeNo, bool vE, string data)
+        {
+            if (block == 0)
+            {
+                foreach (var item in nodeDevInfoModels_one)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        if (vE)
+                        {
+                            item.VersionErr = 1;
+                            item.NodeVersion = "超时";
+                        }
+                        else
+                        {
+                            item.VersionErr = 2;
+                            item.NodeVersion = data;
+                        }
+                    }
+
+                }
+            }
+
+            if (block == 1)
+            {
+                foreach (var item in nodeDevInfoModels_two)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        if (vE)
+                        {
+                            item.VersionErr = 1;
+                            item.NodeVersion = "超时";
+                        }
+                        else
+                        {
+                            item.VersionErr = 2;
+                            item.NodeVersion = data;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        // 运行电流
         public void boardCurrentTask(int block, int nodeNo, float value, int flag)
         {
             if (block == 0)
@@ -271,6 +278,32 @@ namespace coordinateCtrlSys.ViewModel
             }
         }
 
+        // 功能测试
+        public void funTestTask(int block, int nodeNo, bool flag)
+        {
+            if (block == 0)
+            {
+                foreach (var item in nodeDevInfoModels_one)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        item.FuncTest = flag ? 1 : 2;
+                    }
+
+                }
+            }
+
+            if (block == 1)
+            {
+                foreach (var item in nodeDevInfoModels_two)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        item.FuncTest = flag ? 1 : 2;
+                    }
+                }
+            }
+        }
 
     }
 }
