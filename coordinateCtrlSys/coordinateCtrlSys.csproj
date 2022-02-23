@@ -287,7 +287,7 @@
     <Content Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="FlashBin\test.bin">
+    <None Include="FlashBin\cq_ul_md_yj_v3.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="InnerShell\diffJlinkPort.bat">
@@ -302,6 +302,11 @@
     <None Include="InnerShell\lsPort.jlink">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="InnerShell\progBin.jlink">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="InnerShell\progJlinkBin_0.bat" />
+    <None Include="InnerShell\progJlinkBin_1.bat" />
     <None Include="Settings\config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

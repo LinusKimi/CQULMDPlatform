@@ -46,6 +46,76 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
+      <Name>获取node 配置</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 a0 C0 76</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>0D</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 a0 0d 1B</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>89</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 a0 89 8E</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>FF</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 a0 FF CB</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>AE</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 a0 AE 7B</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>B0 E5</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 B0 E5 DA</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
       <Name>开始测试状态报告</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 CA DA 47</Data>
@@ -98,6 +168,34 @@
       <Name>节点短路状态</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 04 CA 92 06 01 D5</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>jlink 烧写</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 50 00 2c</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>

@@ -49,6 +49,8 @@ namespace coordinateCtrlSys
 
         private const string DefaultPortName = "COM3";
 
+        private const int PostADCDataCnt = 1400;
+
         // bool value
 
         private bool checkJlinkValue = false;
@@ -60,6 +62,12 @@ namespace coordinateCtrlSys
         private string[] jlinkPortSN = new string[2] ;
 
         private bool[] jlinkUsed = new bool[] { false, false};
+
+        private bool StartSystem = false;
+
+        private bool MCUConnectValue = false;
+
+        private float[,] runCurrentValue = new float[16, 3];
 
         private enum cmdType {
             // 响应下位机连接
@@ -79,7 +87,17 @@ namespace coordinateCtrlSys
             requestEmptyValue = 0x43,
 
             // jlink 烧写指令
-            requestJlinkProg = 0x50
+            requestJlinkProg = 0x50,
+
+            // 运行电流
+            requestRunValue_1 = 0x44,
+            requestRunValue_2 = 0x45,
+            requestRunValue_3 = 0x46,
+
+            requestRealData = 0x5E,
+
+            requestADCStatus = 0x5C
+
         };
         
         private enum msgType
@@ -88,7 +106,8 @@ namespace coordinateCtrlSys
             putDownFlag = 0xD0,
             nodeConnect = 0x91,
             nodeShortOut = 0x92,
-            nodeVersion = 0x89
+            nodeVersion = 0x89,
+            nodeVersionErr = 0x77
         };
 
         // ------------- 
@@ -158,6 +177,7 @@ namespace coordinateCtrlSys
                     MsgBox.Items.RemoveAt(0);
 
                 MsgBox.Items.Add(DateTime.Now.ToString("HH:mm:ss") + ": " + msg);
+                MsgBox.ScrollIntoView(MsgBox.Items[MsgBox.Items.Count - 1]);
             });
 
             logger.writeToFile(msg);
@@ -184,7 +204,7 @@ namespace coordinateCtrlSys
 
             var proc = new Process();
             proc.StartInfo.FileName = lsjlinkbatpath;
-            proc.StartInfo.CreateNoWindow = false;
+            proc.StartInfo.CreateNoWindow = true;
 
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
@@ -245,6 +265,7 @@ namespace coordinateCtrlSys
 
             _MainViewModel.getSettingFile(filePath);
 
+            // 判断 配置项
             string binPath = AppDomain.CurrentDomain.BaseDirectory + "FlashBin\\" + _MainViewModel.configurationData.systemConfig.BinFileName;
 
             if (!File.Exists(binPath))
@@ -253,9 +274,48 @@ namespace coordinateCtrlSys
                 return;
             }
 
+            if (string.Empty == _MainViewModel.configurationData.systemConfig.MCU ||
+                string.Empty == _MainViewModel.configurationData.systemConfig.FlashAddress)
+            {
+                AddMsg("芯片配置信息不存在");
+                return;
+            }
+
+            // 初始化烧写脚本
+            {
+                string _jlinkFileText = "erase\r\n" +
+                                        "loadfile " + binPath + " " + _MainViewModel.configurationData.systemConfig.FlashAddress + "\r\n" +
+                                        "r\r\n" +
+                                        "qc\r\n";
+
+                string _jlinkFilePath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\progBin.jlink";
+
+                File.WriteAllText(_jlinkFilePath, _jlinkFileText);
+
+                string _progBatText = "jlink.exe usb " + jlinkPortSN[0] + " " +
+                                      "-device " +
+                                      _MainViewModel.configurationData.systemConfig.MCU +
+                                      " -if swd -speed 1000 " +
+                                      " -CommandFile " + _jlinkFilePath;
+
+                string _progBatPath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\progJlinkBin_0.bat";
+
+                File.WriteAllText(_progBatPath, _progBatText);
+
+                _progBatText = "jlink.exe usb " + jlinkPortSN[1] + " " +
+                                      "-device " +
+                                      _MainViewModel.configurationData.systemConfig.MCU +
+                                      " -if swd -speed 1000 " +
+                                      " -CommandFile " + _jlinkFilePath;
+
+                _progBatPath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\progJlinkBin_1.bat";
+
+                File.WriteAllText(_progBatPath, _progBatText);
+            }
+
             configSystemDone = true;
 
-            AddMsg("成功加载配置文件");
+            AddMsg("加载 " + System.IO.Path.GetFileName(filePath));
         }
 
         // 配置系统 开始运行
@@ -267,14 +327,24 @@ namespace coordinateCtrlSys
                 return;
             }
 
+            if (!checkJlinkValue)
+            {
+                AddMsg("请检查JLink设备连接");
+                return;
+            }
+
             if (uartServer.OpenPort(DefaultPortName))
             {
                 _MainViewModel.portOpend = true;
+
+                StartSystem = true;
                 AddMsg("成功打开通讯接口");
             }
             else
             {
                 _MainViewModel.portOpend = false;
+
+                StartSystem = false;
                 AddMsg("通讯接口打开失败");
             }
         }
@@ -289,9 +359,13 @@ namespace coordinateCtrlSys
 
             _MainViewModel.portOpend = false;
 
+            StartSystem = false;
+            MCUConnectValue = false;
+
             AddMsg("通讯接口关闭");
         }
 
+        // 主 处理函数
         private void ProcessTask(byte[] data)
         {
             cmdcnt++;
@@ -300,6 +374,11 @@ namespace coordinateCtrlSys
             Console.WriteLine(" ThreadId:" + Thread.CurrentThread.ManagedThreadId + " Execute Time:" + DateTime.Now);
 
             // 数据校验
+
+            if (!StartSystem)
+            {
+                return;
+            }
 
             crc8.AutoReset = true;
             var crcTemp = crc8.ComputeHash(data, 0, data.Length - crcByteCnt);
@@ -314,7 +393,7 @@ namespace coordinateCtrlSys
                 return;
             }
 
-            // 数据解析
+            // 数据解析  MCUConnectValue  需要添加判断
 
             switch ((cmdType)data[6])
             {
@@ -324,14 +403,16 @@ namespace coordinateCtrlSys
 
                 case cmdType.requestJlink:
                     bool nodenumber = (data[7] == 0x00) ? true : false;
-                    bool ioSet = (data[8] == 0x01) ? true : false; 
+                    bool ioSet = (data[8] == 0x01) ? true : false;
                     DifferJlink(nodenumber, ioSet);
                     break;
 
                 case cmdType.getNodeCmd:
+                    getNodeCmdTask(data);
                     break;
 
                 case cmdType.getNodeBool:
+                    getNodeBoolTask(data);
                     break;
 
                 case cmdType.putRunStatus:
@@ -346,14 +427,39 @@ namespace coordinateCtrlSys
                     ProgrameFlashTask(data);
                     break;
 
+                // 运行电流
+                case cmdType.requestRunValue_1:
+                    runCurrentTask(data, 0);
+                    break;
+
+                case cmdType.requestRunValue_2:
+                    runCurrentTask(data, 1);
+                    break;
+
+                case cmdType.requestRunValue_3:
+                    runCurrentTask(data, 2);
+                    break;
+
+                case cmdType.requestRealData:
+                    putRealADCDataTask(data);
+                    break;
+
+                case cmdType.requestADCStatus:
+                    putADCStatusTask(data);
+                    break;
+
                 default:
 
                     break;
             }
 
         }
+       
 
-        
+
+
+
+        // 请求连接
         public void RequestConnectedTask()
         {
             byte[] _responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x01, 0xcf, 0x00 };
@@ -362,13 +468,13 @@ namespace coordinateCtrlSys
 
             uartServer.SendData(_responseData);
 
-            //MCUConnectValue = true;
+            MCUConnectValue = true;
             AddMsg("下位机已连接, 等待测试");
         }
 
         // 区分jlink
         public void DifferJlink(bool nodeNmber, bool ioSet)
-        {
+        {           
             string _jlinkFileText = (ioSet ? "tck1\r\nt1\r\n": "tck0\r\nt0\r\n") +                                    
                                     "sleep 1000\r\n" +
                                     "q";
@@ -387,7 +493,7 @@ namespace coordinateCtrlSys
 
             var proc = new Process();
             proc.StartInfo.FileName = batFilePath;
-            proc.StartInfo.CreateNoWindow = false;
+            proc.StartInfo.CreateNoWindow = true;
 
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
@@ -416,16 +522,113 @@ namespace coordinateCtrlSys
 
         }
 
+        // 获取 节点配置
         public void getNodeCmdTask(byte[] requestData)
-        { 
-            
+        {
+            string _configData = "";
+            byte[] returnBytes;
+            int cmdLen = 0;
+            byte[] responseData;
+
+            List<byte> _resData = new List<byte>();
+            _resData.Clear();
+            _resData.Add(0xeb); _resData.Add(0x90); _resData.Add(0x09); _resData.Add(0xbe);
+
+            switch ((byte)requestData[7])
+            {
+                case 0x0D:
+                    _configData = _MainViewModel.configurationData.ConfigurationNode.SignalCMD.Replace(" ", "");
+                    break;
+
+                case 0x89:
+                    _configData = _MainViewModel.configurationData.ConfigurationNode.InnerVersion.Replace(" ", "");
+                    break;
+
+                case 0xFF:
+                    _configData = _MainViewModel.configurationData.ConfigurationNode.ResetDev.Replace(" ", "");
+                    break;
+
+                case 0xAE:
+                    _configData = _MainViewModel.configurationData.ConfigurationNode.USEAE.Replace(" ", "");
+                    break;
+
+                case 0xC0:
+                    string connectType = _MainViewModel.configurationData.systemConfig.BoardInterface;
+
+                    _resData.Add(0x00); _resData.Add(0x07);
+                    _resData.Add(0xA0); _resData.Add(0xC0);
+
+                    UInt32 _baud = 0;
+
+                    if (connectType.Contains("IIC"))
+                    {                        
+                        _resData.Add(0x01);
+                        _baud = (UInt32)int.Parse(_MainViewModel.configurationData.systemConfig.IICBaud);
+                    }
+                    else if(connectType.Contains("UART"))
+                    {
+                        _resData.Add(0x00);
+                        _baud = (UInt32)int.Parse(_MainViewModel.configurationData.systemConfig.UARTBaud);
+                    }
+
+                    _resData.Add((byte)((_baud >> 24) & 0xFF));
+                    _resData.Add((byte)((_baud >> 16) & 0xFF));
+                    _resData.Add((byte)((_baud >> 8) & 0xFF));
+                    _resData.Add((byte)((_baud >> 0) & 0xFF));
+
+                    _resData.Add(0x00);
+
+                    responseData = _resData.ToArray();
+                    responseData[responseData.Length - 1] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+
+                    uartServer.SendData(responseData);
+                    return;
+
+                default:
+
+                    return;
+            }
+
+            returnBytes = new byte[_configData.Length / 2];
+            for (int i = 0; i < returnBytes.Length; i++)
+                returnBytes[i] = Convert.ToByte(_configData.Substring(i * 2, 2), 16);
+
+            cmdLen = 2 + returnBytes.Length;
+
+            _resData.Add((byte)(cmdLen / 8));
+            _resData.Add((byte)(cmdLen % 8));
+
+            _resData.Add(0xA0); _resData.Add(0x0D);
+
+            for (int i = 0; i < returnBytes.Length; i++)
+                _resData.Add(returnBytes[i]);
+
+            responseData = new byte[_resData.Count + 1];
+            Parallel.For(0, _resData.Count, i =>
+            {
+                responseData[i] = _resData[i];
+            });
+
+            responseData[_resData.Count] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+
+            uartServer.SendData(responseData);
+
         }
 
+        // 获取 节点 Bool 配置
         public void getNodeBoolTask(byte[] requestData)
-        { 
-            
+        {
+            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0xb0, 0xe5, 0x00, 0x00 };
+
+            var _config = _MainViewModel.configurationData.ConfigurationNode.EnableAEEA;
+
+            responseData[8] = _config ? (byte)0x01 : (byte)0x00;
+            responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+
+            uartServer.SendData(responseData);
         }
 
+        // 运行状态 上报 处理函数
         public void RunStatusTask(byte[] requestData)
         {
             switch ((msgType)requestData[7])
@@ -463,19 +666,26 @@ namespace coordinateCtrlSys
 
                     break;
 
+                case msgType.nodeVersionErr:
+                    int nodeVersionErr = (ushort)requestData[8];
+
+                    _MainViewModel.nodeVersionStatus();
+                    break;
+
                 default:
                     break;
             }
         }
 
+        // 空板电流 处理函数
         public void EmptyCurrentTask(byte[] requestData)
         {
-            int nodeNumber = (ushort)requestData[8];
+            int nodeNumber = (ushort)requestData[7];
 
             float[] adcData = new float[100];
 
             Parallel.For(0, 100, i=> {
-                adcData[i] = BitConverter.ToSingle(requestData, i * 4 + 9);
+                adcData[i] = (float)BitConverter.ToUInt16(requestData, i * 2 + 8) ;
             });
 
             double s = 0;
@@ -486,7 +696,7 @@ namespace coordinateCtrlSys
 
             double rmsdata = Math.Sqrt(s / 100);
 
-            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x43, (requestData[8]), 0x00, 0x00 };
+            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x43, (requestData[7]), 0x00, 0x00 };
 
             var dataRange = _MainViewModel.configurationData.ConfigurationNode.EmptyCurrentValue;
             bool statusFlag = false;
@@ -508,19 +718,165 @@ namespace coordinateCtrlSys
             uartServer.SendData(responseData);
         }
 
+        // jlink 烧写处理函数
         public void ProgrameFlashTask(byte[] requestData)
         {
-            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x50, (requestData[8]) , 0x00, 0x00};
+            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x50, (requestData[7]), 0x00, 0x00 };
 
-            // check bin file
-            string binPath = AppDomain.CurrentDomain.BaseDirectory + "FlashBin\\" + _MainViewModel.configurationData.systemConfig.BinFileName;
+            int nodeNumber = (ushort)requestData[7];
+            int blockNumber = nodeNumber / 8;
 
-            
-            
+            if (jlinkUsed[blockNumber == 0 ? 0 : 1])
+            {
+                responseData[8] = 0xBB;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                AddMsg("Jlink[" + blockNumber + "] 正在使用中");
+                return;
+            }
+
+            jlinkUsed[blockNumber == 0 ? 0 : 1] = true;
+
+            var proc = new Process();
+            proc.StartInfo.FileName = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\progJlinkBin_" + (blockNumber == 0 ? 0 : 1) + ".bat";
+            proc.StartInfo.CreateNoWindow = true;
+
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
+            proc.StartInfo.UseShellExecute = false;
+
+            proc.Start();
+            proc.WaitForExit(5);
+
+            string processOut = proc.StandardOutput.ReadToEnd();
+            proc.Close();
+
+            jlinkUsed[blockNumber == 0 ? 0 : 1] = false;
+
+            if (processOut.Contains("Downloading file") &&
+                processOut.Contains("Reset delay:") &&
+                processOut.Contains("Script processing completed"))
+            {
+                responseData[8] = 0x01;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                _MainViewModel.jlinkProgStatus((blockNumber == 0 ? 0 : 1), (nodeNumber % 8 + 1), true);
+                AddMsg("Block " + (blockNumber + 1) + " NO." + (nodeNumber % 8 + 1) + " 烧写成功");
+
+                return;
+            }
+            else
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                _MainViewModel.jlinkProgStatus((blockNumber == 0 ? 0 : 1), (nodeNumber % 8 + 1), false);
+                AddMsg("Block " + (blockNumber + 1) + " NO." + (nodeNumber % 8 + 1) + " 烧写失败");
+
+                return;
+            }
+
 
         }
 
+        // 运行 电流处理函数
+        public void runCurrentTask(byte[] requestData, int stepCnt)
+        {
+            int nodeNumber = requestData[7];
 
+            int blockNumber = nodeNumber / 8 + 1;
+
+            float[] adcData = new float[100];
+
+            Parallel.For(0, 100, i=> {
+                adcData[i] = (float)BitConverter.ToUInt16(requestData, i * 2 + 8);
+            });
+
+            double s = 0;
+            for (int i = 0; i < 100; i++)
+            {
+                s += adcData[i] * adcData[i];
+            }
+
+            float rmsdata = (float)Math.Round(Math.Sqrt(s / 100), 2);
+
+            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, (requestData[6]), (requestData[7]), 0x00, 0x00 };
+
+            var runCurrntRange = _MainViewModel.configurationData.ConfigurationNode.BoardCurrentValue;
+
+            runCurrentValue[nodeNumber, stepCnt - 1] = rmsdata;
+
+            if (rmsdata < runCurrntRange[0] || rmsdata > runCurrntRange[1])
+            {
+                responseData[8] = 0x00;
+
+                // show view
+                _MainViewModel.boardCurrentTask(blockNumber, nodeNumber + 1, rmsdata, 1);
+            }
+            else
+            {
+                if (stepCnt == 3)
+                {
+                    // show view
+                    float _sum = 0;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        _sum += runCurrentValue[nodeNumber, i];
+                    }
+
+                }
+
+                responseData[8] = 0x01;
+            }
+
+            responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+
+            uartServer.SendData(responseData);
+
+
+        }
+
+        // 上报 ADC数据
+        public void putRealADCDataTask(byte[] requestData)
+        {
+            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x5E, (requestData[7]), 0x00, 0x00};
+
+            // 地址修改
+            if ((requestData.Length != (PostADCDataCnt * 2)) || requestData[PostADCDataCnt * 2 + 1] == 0xEB)
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                logger.writeToConsole("ADC data cmd error");
+                return;
+            }
+
+            float[] adcData = new float[PostADCDataCnt];
+
+            Parallel.For(0, PostADCDataCnt, i=> {
+                adcData[i] = BitConverter.ToSingle(requestData, i * 4 + 8);
+            });
+
+            float[] peakValue = new float[4];
+            float[] peakIndex = new float[4];
+            Parallel.For(0, 4, n=> { 
+                
+            });
+
+            // 添加判断算法
+
+
+        }
+
+        // ADC 数据异常报告
+        public void putADCStatusTask(byte[] requestData)
+        { 
+            
+        }
 
 
     }

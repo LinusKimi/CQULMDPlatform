@@ -63,7 +63,13 @@ namespace coordinateCtrlSys.ViewModel
             configurationData = _configReader.ReadFile(path);
             forFactory = configurationData.systemConfig.Factory;
             PCBAVersion = configurationData.systemConfig.SoftwareVersion;
-            boardInterface = configurationData.systemConfig.BoardInterface;
+
+            var _t = configurationData.systemConfig.BoardInterface;
+
+            if (_t.Contains("IIC"))
+                boardInterface = _t + " / " + configurationData.systemConfig.IICBaud;
+            else if (_t.Contains("UART"))
+                boardInterface = _t + " / " + configurationData.systemConfig.UARTBaud;
         }
 
         public void StartStatus()
@@ -135,7 +141,7 @@ namespace coordinateCtrlSys.ViewModel
             }
         }
 
-        public void nodeVersionStatus(int block, int nodeNo, bool vE, byte[] data)
+        public void nodeVersionStatus(int block, int nodeNo, bool vE, byte[] data = null)
         {
             if (block == 0)
             {
@@ -179,6 +185,7 @@ namespace coordinateCtrlSys.ViewModel
             }
 
         }
+
 
         public void nodeEmptyCurrentStatus(int block, int nodeNo, bool flag, float data)
         {
@@ -209,9 +216,60 @@ namespace coordinateCtrlSys.ViewModel
 
         }
 
+        public void jlinkProgStatus(int block, int nodeNo, bool flag)
+        {
+            if (block == 0)
+            {
+                foreach (var item in nodeDevInfoModels_one)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        item.JlinkProg = flag ? 2 : 1;
+                    }
 
+                }
+            }
 
+            if (block == 1)
+            {
+                foreach (var item in nodeDevInfoModels_two)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        item.JlinkProg = flag ? 2 : 1;
+                    }
+                }
+            }
 
+        }
+
+        public void boardCurrentTask(int block, int nodeNo, float value, int flag)
+        {
+            if (block == 0)
+            {
+                foreach (var item in nodeDevInfoModels_one)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        item.BoardCurrent = value;
+                        item.BoardCurrentError = flag;
+                    }
+
+                }
+            }
+
+            if (block == 1)
+            {
+                foreach (var item in nodeDevInfoModels_two)
+                {
+                    if (item.DevCnt == nodeNo)
+                    {
+                        item.BoardCurrent = value;
+                        item.BoardCurrentError = flag;
+                    }
+                }
+            }
+        }
 
 
     }

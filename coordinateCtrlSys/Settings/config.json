@@ -1,7 +1,7 @@
 {
   "systemConfig": {
     // 厂商
-    "Factory": "YJ",
+    "Factory": "云鲸",
 
     // 软件版本
     "SoftwareVersion": "V_TestPlatform",
@@ -16,13 +16,13 @@
     "UARTBaud": "115200",
 
     // 芯片类型
-    "MCU": "STM32G0",
+    "MCU": "STM32G031G6",
 
     // 芯片烧写Flash首地址
-    "FlashAddress": "0x0000000",
+    "FlashAddress": "0x08000000",
 
     // 烧结文件名
-    "BinFileName": "test.bin"
+    "BinFileName": "cq_ul_md_yj_v3.bin"
   },
   "ConfigurationNode": {
     // 单次指令
