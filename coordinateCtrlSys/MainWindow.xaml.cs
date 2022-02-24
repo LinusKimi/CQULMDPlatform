@@ -83,7 +83,7 @@ namespace coordinateCtrlSys
             putRunStatus = 0xCA,
 
             // 空板电流
-            requestEmptyValue = 0x43,
+            //requestEmptyValue = 0x43,
 
             // jlink 烧写指令
             requestJlinkProg = 0x50,
@@ -107,6 +107,12 @@ namespace coordinateCtrlSys
             putDownFlag = 0xD0,
             nodeConnect = 0x91,
             nodeShortOut = 0x92,
+
+            emptyCurValue = 0x43,
+            runCurrValue_0 = 0x44,
+            runCurrValue_1 = 0x45,
+            runCurrValue_2 = 0x46,
+
             nodeVersion = 0x89,
             nodeVersionErr = 0x77
         };
@@ -433,9 +439,7 @@ namespace coordinateCtrlSys
                     return;
                 }
             }
-            
-
-            
+                       
             var crcTemp = crc8.ComputeHash(data, 0, data.Length - crcByteCnt);
 
             if (crcTemp[0] == data[data.Length - 1])
@@ -468,9 +472,9 @@ namespace coordinateCtrlSys
                     RunStatusTask(data);
                     break;
 
-                case cmdType.requestEmptyValue:
-                    EmptyCurrentTask(data);
-                    break;
+                //case cmdType.requestEmptyValue:
+                //    EmptyCurrentTask(data);
+                //    break;
 
                 case cmdType.requestJlinkProg:
                     ProgrameFlashTask(data);
@@ -783,6 +787,8 @@ namespace coordinateCtrlSys
 
                 case msgType.buttonDownFlag:
                     _MainViewModel.StartStatus();
+
+                    Array.Clear(runCurrentValue, 0, runCurrentValue.Length);
                     AddMsg("启动测试流程");
                     break;
 
@@ -806,6 +812,77 @@ namespace coordinateCtrlSys
                     _MainViewModel.nodeShortOutStatus((nodeShortOutNumber / 8), (nodeShortOutNumber % 8 + 1), nodeShortOutFlag ? 2 : 3);
 
                     AddMsg("Block " + (nodeShortOutNumber / 8 + 1) + "# No. " + (nodeShortOutNumber % 8 + 1) + (nodeShortOutFlag ? " " : " 未") + "短路");
+
+                    break;
+
+                case msgType.emptyCurValue:
+                    var _emptyRange = _MainViewModel.configurationData.ConfigurationNode.EmptyCurrentValue;
+
+                    int nodeEmptyNumber = (ushort)requestData[8];
+
+                    float emptyValue = BitConverter.ToSingle(requestData, 8);
+
+                    if (emptyValue < _emptyRange[0] || emptyValue > _emptyRange[1])
+                    {
+                        _MainViewModel.nodeEmptyCurrentStatus((nodeEmptyNumber / 8), (nodeEmptyNumber % 8 + 1), false, (float)Math.Round(emptyValue, 2));
+                    }
+                    else
+                    {
+                        _MainViewModel.nodeEmptyCurrentStatus((nodeEmptyNumber / 8), (nodeEmptyNumber % 8 + 1), true, (float)Math.Round(emptyValue, 2));
+                    }
+                   
+                    break;
+
+                case msgType.runCurrValue_0:
+                    var runCurrntRange_0 = _MainViewModel.configurationData.ConfigurationNode.BoardCurrentValue;
+
+                    var nodeRunCurr_0 = (ushort)requestData[8];
+
+                    float runCurr_0 = BitConverter.ToSingle(requestData, 8);
+
+                    runCurrentValue[nodeRunCurr_0, 0] = runCurr_0;
+
+                    if (runCurr_0 < runCurrntRange_0[0] || runCurr_0 > runCurrntRange_0[1])
+                    {
+                        _MainViewModel.boardCurrentTask((nodeRunCurr_0 / 8), (nodeRunCurr_0 % 8 + 1), (float)Math.Round(runCurr_0, 2), 1);
+                    }
+
+                    break;
+
+                case msgType.runCurrValue_1:
+                    var runCurrntRange_1 = _MainViewModel.configurationData.ConfigurationNode.BoardCurrentValue;
+
+                    var nodeRunCurr_1 = (ushort)requestData[8];
+
+                    float runCurr_1 = BitConverter.ToSingle(requestData, 8);
+
+                    runCurrentValue[nodeRunCurr_1, 1] = runCurr_1;
+
+                    if (runCurr_1 < runCurrntRange_1[0] || runCurr_1 > runCurrntRange_1[1])
+                    {
+                        _MainViewModel.boardCurrentTask((nodeRunCurr_1 / 8), (nodeRunCurr_1 % 8 + 1), (float)Math.Round(runCurr_1, 2), 1);
+                    }
+                    break;
+
+                case msgType.runCurrValue_2:
+
+                    var runCurrntRange_2 = _MainViewModel.configurationData.ConfigurationNode.BoardCurrentValue;
+
+                    var nodeRunCurr_2 = (ushort)requestData[8];
+
+                    float runCurr_2 = BitConverter.ToSingle(requestData, 8);
+
+                    runCurrentValue[nodeRunCurr_2, 2] = runCurr_2;
+
+                    if (runCurr_2 < runCurrntRange_2[0] || runCurr_2 > runCurrntRange_2[1])
+                    {
+                        _MainViewModel.boardCurrentTask((nodeRunCurr_2 / 8), (nodeRunCurr_2 % 8 + 1), (float)Math.Round(runCurr_2, 2), 1);
+                    }
+                    else
+                    {
+                        var avgValue = (runCurrentValue[nodeRunCurr_2, 0] + runCurrentValue[nodeRunCurr_2, 1] + runCurrentValue[nodeRunCurr_2, 2]) / 3;
+                        _MainViewModel.boardCurrentTask((nodeRunCurr_2 / 8), (nodeRunCurr_2 % 8 + 1), (float)Math.Round(avgValue, 2), 2);
+                    }
 
                     break;
 
