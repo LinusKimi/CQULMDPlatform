@@ -70,15 +70,14 @@ namespace coordinateCtrlSys
         private float[,] runCurrentValue = new float[16, 3];
 
         private enum cmdType {
-            // 响应下位机连接
-            requestConnected = 0xfc ,
+            //// 响应下位机连接
+            //requestConnected = 0xfc ,
                        
             // Jlink 区分
             requestJlink = 0xf0,
         
             // 获取 node 配置
             getNodeCmd = 0xA0,
-            getNodeBool = 0xB0,
 
             // 上报消息
             putRunStatus = 0xCA,
@@ -102,7 +101,9 @@ namespace coordinateCtrlSys
         
         private enum msgType
         {
+            jlinkDiffErrFlag = 0xF1,
             startFlag = 0xDA,
+            buttonDownFlag = 0xDB,
             putDownFlag = 0xD0,
             nodeConnect = 0x91,
             nodeShortOut = 0x92,
@@ -143,25 +144,38 @@ namespace coordinateCtrlSys
             uartServer = new UartServer(logger, _uartActionBlock);
 
             DataContext = _MainViewModel;
+
+            crc8.AutoReset = true;
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
             AddMsg("启动应用");
 
-            //_UITimer = new DispatcherTimer();
+            _UITimer = new DispatcherTimer();
 
-            //_UITimer.Interval = new TimeSpan(0, 1, 0);
-            //_UITimer.IsEnabled = true;
-            //_UITimer.Tick += UITimer_timeout;
-            //_UITimer.Start();
+            _UITimer.Interval = new TimeSpan(0, 0, 10);
+            
+            _UITimer.Tick += UITimer_timeout;           
 
             checkJlinkTask();
         }
 
         private void UITimer_timeout(object sender, EventArgs e)
         {
-            AddMsg("Timer Task");
+            _UITimer.Stop();            
+
+            if (uartServer.IsOpen())
+            {
+                uartServer.ClosePort();
+            }
+
+            _MainViewModel.portOpend = false;
+
+            StartSystem = false;
+            MCUConnectValue = false;
+
+            AddMsg("下位机连接超时");
         }
 
         private void MetroWindow_Closed(object sender, EventArgs e)
@@ -351,6 +365,10 @@ namespace coordinateCtrlSys
             {
                 _MainViewModel.portOpend = true;
 
+                RequestConnectedTask();
+
+                _UITimer.Start();
+
                 StartSystem = true;
                 AddMsg("成功打开通讯接口");
             }
@@ -369,6 +387,11 @@ namespace coordinateCtrlSys
             if (uartServer.IsOpen())
             {
                 uartServer.ClosePort();
+            }
+
+            if (_UITimer.IsEnabled)
+            {
+                _UITimer.Stop();
             }
 
             _MainViewModel.portOpend = false;
@@ -393,8 +416,26 @@ namespace coordinateCtrlSys
             {
                 return;
             }
+            if (MCUConnectValue)
+            {
+                ;
+            }
+            else
+            {
+                if (_UITimer.IsEnabled)
+                {
+                    _UITimer.Stop();
+                    MCUConnectValue = true;
+                    AddMsg("下位机已连接, 等待测试");
+                }
+                else
+                {
+                    return;
+                }
+            }
+            
 
-            crc8.AutoReset = true;
+            
             var crcTemp = crc8.ComputeHash(data, 0, data.Length - crcByteCnt);
 
             if (crcTemp[0] == data[data.Length - 1])
@@ -411,22 +452,16 @@ namespace coordinateCtrlSys
 
             switch ((cmdType)data[6])
             {
-                case cmdType.requestConnected:
-                    RequestConnectedTask();
-                    break;
+                //case cmdType.requestConnected:
+                //    RequestConnectedTask();
+                //    break;
 
                 case cmdType.requestJlink:
-                    bool nodenumber = (data[7] == 0x00) ? true : false;
-                    bool ioSet = (data[8] == 0x01) ? true : false;
-                    DifferJlink(nodenumber, ioSet);
+                    DifferJlink();
                     break;
 
                 case cmdType.getNodeCmd:
                     getNodeCmdTask(data);
-                    break;
-
-                case cmdType.getNodeBool:
-                    getNodeBoolTask(data);
                     break;
 
                 case cmdType.putRunStatus:
@@ -478,57 +513,82 @@ namespace coordinateCtrlSys
 
             uartServer.SendData(_responseData);
 
-            MCUConnectValue = true;
-            AddMsg("下位机已连接, 等待测试");
+            AddMsg("指令已发送, 等待连接");
         }
 
         // 区分jlink
-        public void DifferJlink(bool nodeNmber, bool ioSet)
+        public void DifferJlink()
         {           
-            string _jlinkFileText = (ioSet ? "tck1\r\nt1\r\n": "tck0\r\nt0\r\n") +                                    
+            string _jlinkFileText = "tck1\r\nt1\r\n" +                                    
                                     "sleep 1000\r\n" +
+                                    "tck0\r\nt0\r\n" +
                                     "q";
             var jlinkFilePath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\diffPort.jlink";
 
             File.WriteAllText(jlinkFilePath, _jlinkFileText);
 
-            var batFilePath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\diffJlinkPort.bat";
+            var batFilePath_0 = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\diffJlinkPort_0.bat";
 
             string _batText = "echo diffJlinkPort\r\n" +
-                                "jlink.exe usb "+ jlinkPortSN[nodeNmber ? 0 : 1] +
+                                "jlink.exe usb "+ jlinkPortSN[0] +
                                 " " +
                                 " -CommandFile " + jlinkFilePath;
 
-            File.WriteAllText(batFilePath, _batText);
+            File.WriteAllText(batFilePath_0, _batText);
 
-            var proc = new Process();
-            proc.StartInfo.FileName = batFilePath;
-            proc.StartInfo.CreateNoWindow = true;
+            var batFilePath_1 = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\diffJlinkPort_1.bat";
 
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.RedirectStandardError = true;
-            proc.StartInfo.UseShellExecute = false;
+            string _batText_1 = "echo diffJlinkPort\r\n" +
+                                "jlink.exe usb " + jlinkPortSN[1] +
+                                " " +
+                                " -CommandFile " + jlinkFilePath;
 
-            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0xf0, (nodeNmber ? (byte)0x00 : (byte)0x01), (ioSet ? (byte)0x01:(byte)0x00), 0x00 };
-            responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+            File.WriteAllText(batFilePath_1, _batText_1);
 
-            proc.Start();
-            uartServer.SendData(responseData);
 
-            proc.WaitForExit(1);
+            var proc_0 = new Process();
+            proc_0.StartInfo.FileName = batFilePath_0;
+            proc_0.StartInfo.CreateNoWindow = true;
+            
+            proc_0.StartInfo.RedirectStandardOutput = true;
+            proc_0.StartInfo.RedirectStandardError = true;
+            proc_0.StartInfo.UseShellExecute = false;
 
-            string processOut = proc.StandardOutput.ReadToEnd();
-            string processError = proc.StandardError.ReadToEnd();
+            var proc_1 = new Process();
+            proc_1.StartInfo.FileName = batFilePath_1;
+            proc_1.StartInfo.CreateNoWindow = true;
 
-            proc.Close();
+            proc_1.StartInfo.RedirectStandardOutput = true;
+            proc_1.StartInfo.RedirectStandardError = true;
+            proc_1.StartInfo.UseShellExecute = false;
 
-            if (!processOut.Contains("Sleep"))
+            proc_0.Start();
+            proc_1.Start();
+
+            proc_0.WaitForExit(2);
+            proc_1.WaitForExit(2);
+
+            string processOut_0 = proc_0.StandardOutput.ReadToEnd();
+            string processError_0 = proc_0.StandardError.ReadToEnd();
+
+            string processOut_1 = proc_1.StandardOutput.ReadToEnd();
+            string processError_1 = proc_1.StandardError.ReadToEnd();
+
+            proc_0.Close();
+            proc_1.Close();
+
+            if (string.Empty != processError_0 && string.Empty != processError_1)
+            {
+                AddMsg("jlink 测试指令无效");
+            }
+
+            if (!processOut_0.Contains("Sleep") || !processOut_1.Contains("Sleep"))
             {
                 logger.writeToConsole("jlink 区分执行失败");
                 return;
             }
 
-            AddMsg("Jlink[" + (nodeNmber?"0":"1") + "] " + "区分指令执行");
+            AddMsg("Jlink 区分指令执行完成");
 
         }
 
@@ -594,6 +654,68 @@ namespace coordinateCtrlSys
                     uartServer.SendData(responseData);
                     return;
 
+                case 0xEC:
+                    var _ev = _MainViewModel.configurationData.ConfigurationNode.EmptyCurrentValue;
+                    var data_0 = BitConverter.GetBytes(_ev[0]);
+                    var data_1 = BitConverter.GetBytes(_ev[1]);
+
+                    _resData.Add(0x00); _resData.Add((byte)(2 + data_0.Length + data_1.Length) );
+                    _resData.Add(0xA0); _resData.Add(0xEC);
+
+                    for (int i = 0; i < data_0.Length; i++)
+                        _resData.Add(data_0[i]);
+
+                    for (int i = 0; i < data_1.Length; i++)
+                        _resData.Add(data_1[i]);
+
+                    _resData.Add(0x00);
+
+                    responseData = _resData.ToArray();
+                    responseData[responseData.Length - 1] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+
+                    uartServer.SendData(responseData);
+
+
+                    return;
+
+                case 0xBC:
+                    var _bv = _MainViewModel.configurationData.ConfigurationNode.EmptyCurrentValue;
+                    var Bdata_0 = BitConverter.GetBytes(_bv[0]);
+                    var Bdata_1 = BitConverter.GetBytes(_bv[1]);
+
+                    _resData.Add(0x00); _resData.Add((byte)(2 + Bdata_0.Length + Bdata_1.Length));
+                    _resData.Add(0xA0); _resData.Add(0xBC);
+
+                    for (int i = 0; i < Bdata_0.Length; i++)
+                        _resData.Add(Bdata_0[i]);
+
+                    for (int i = 0; i < Bdata_1.Length; i++)
+                        _resData.Add(Bdata_1[i]);
+
+                    _resData.Add(0x00);
+
+                    responseData = _resData.ToArray();
+                    responseData[responseData.Length - 1] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+
+                    uartServer.SendData(responseData);
+
+                    return;
+
+                case 0xe5:
+                    var _AEEAConfig = _MainViewModel.configurationData.ConfigurationNode.EnableAEEA;
+
+                    _resData.Add(0x00); _resData.Add(0x03);
+                    _resData.Add(0xA0); _resData.Add(0xE5);
+                    _resData.Add((byte)(_AEEAConfig ? 0x01:0x00));
+                    _resData.Add(0x00);
+
+                    responseData = _resData.ToArray();
+                    responseData[responseData.Length - 1] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+
+                    uartServer.SendData(responseData);
+
+                    return;
+
                 default:
 
                     return;
@@ -608,7 +730,7 @@ namespace coordinateCtrlSys
             _resData.Add((byte)(cmdLen / 8));
             _resData.Add((byte)(cmdLen % 8));
 
-            _resData.Add(0xA0); _resData.Add(0x0D);
+            _resData.Add(0xA0); _resData.Add(requestData[7]);
 
             for (int i = 0; i < returnBytes.Length; i++)
                 _resData.Add(returnBytes[i]);
@@ -643,9 +765,25 @@ namespace coordinateCtrlSys
         {
             switch ((msgType)requestData[7])
             {
-                case msgType.startFlag:
+                case msgType.jlinkDiffErrFlag:
+                    var status = requestData[8];
+
+                    if (status == 0x00)
+                        AddMsg("jlink[0] 连接异常");
+                    else if (status == 0x01)
+                        AddMsg("jlink[1] 连接异常");
+                    else if (status == 0x02)
+                        AddMsg("jlink[0, 1] 连接异常");
+
+                    break;
+
+                case msgType.startFlag:                   
+                    AddMsg("可以开始进行测试");
+                    break;
+
+                case msgType.buttonDownFlag:
                     _MainViewModel.StartStatus();
-                    AddMsg("开始测试流程");
+                    AddMsg("启动测试流程");
                     break;
 
                 case msgType.putDownFlag:

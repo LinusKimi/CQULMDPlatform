@@ -294,7 +294,10 @@
     <None Include="FlashBin\cq_ul_md_yj_v3.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="InnerShell\diffJlinkPort.bat">
+    <None Include="InnerShell\diffJlinkPort_0.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="InnerShell\diffJlinkPort_1.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="InnerShell\diffPort.jlink">

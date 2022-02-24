@@ -1,1 +1,6 @@
-﻿
+﻿tck1
+t1
+sleep 1000
+tck0
+t0
+q

@@ -60,7 +60,7 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name />
+      <Name>C0</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 C0 76</Data>
       <Latency>0</Latency>
@@ -97,6 +97,20 @@
     <BSSignal>
       <Name />
       <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 a0 ec B2</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 a0 bc 05</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
       <Data />
       <Latency>0</Latency>
       <Active>false</Active>
@@ -104,7 +118,7 @@
     <BSSignal>
       <Name>B0 E5</Name>
       <DataFormat>Hex</DataFormat>
-      <Data>eb 80 08 be 00 02 B0 E5 DA</Data>
+      <Data>eb 80 08 be 00 02 a0 E5 8D</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -119,6 +133,20 @@
       <Name>开始测试状态报告</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 CA DA 47</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
