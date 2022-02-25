@@ -16,6 +16,13 @@ namespace coordinateCtrlSys
             set { _singleCMD = value; OnPropertyChanged("SignalCMD"); } 
         }
 
+        private int _returnSignalCMD;
+        public int ReturnSignalCMD
+        {
+            get { return _returnSignalCMD; }
+            set { _returnSignalCMD = value; OnPropertyChanged("ReturnSignalCMD"); }
+        }
+
         private string _continualCMD = "";
         public string ContinualCMD {
             get => _continualCMD; 

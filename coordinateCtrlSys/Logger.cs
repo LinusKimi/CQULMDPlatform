@@ -17,5 +17,7 @@ namespace coordinateCtrlSys
         public void writeToConsole(string msg) => _logger.Debug(msg);
 
         public void writeToFile(string msg) => _logger.Info(msg);
+
+        public void saveCurrentValue(string msg) => _logger.Trace(msg);
     }
 }

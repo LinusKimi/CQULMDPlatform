@@ -54,7 +54,6 @@ namespace coordinateCtrlSys.ViewModel
                 new nodeDevInfoModel{ DevCnt = 7 },
                 new nodeDevInfoModel{ DevCnt = 8 },
             };
-
         }
 
         // Ω‚Œˆ≈‰÷√

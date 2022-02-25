@@ -28,6 +28,9 @@
     // 单次指令
     "SignalCMD": "55 AA 0D 0C",
 
+    // 单次指令回复数据长度
+    "ReturnSignalCMD": 18,
+
     // 连续指令
     //"ContinualCMD": "55 AA 0D 0C",
 
@@ -50,9 +53,9 @@
     "EnableAEEA": false,
 
     // 空板电流 [低, 高]
-    "EmptyCurrentValue": [ 0.0, 30.0 ],
+    "EmptyCurrentValue": [ 5.0, 30.0 ],
 
     // 运行电流 [低, 高]
-    "BoardCurrentValue": [ 0.0, 30.0 ]
+    "BoardCurrentValue": [ 12.0, 18.0 ]
   }
  }

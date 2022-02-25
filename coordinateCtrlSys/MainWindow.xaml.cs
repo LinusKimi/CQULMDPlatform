@@ -89,39 +89,57 @@ namespace coordinateCtrlSys
             requestJlinkProg = 0x50,
 
             // 运行电流
-            requestRunValue_1 = 0x44,
-            requestRunValue_2 = 0x45,
-            requestRunValue_3 = 0x46,
+            //requestRunValue_1 = 0x44,
+            //requestRunValue_2 = 0x45,
+            //requestRunValue_3 = 0x46,
 
+            // 上报 实际adc 数据
             requestRealData = 0x5E,
 
+            // ADC 超出动态范围
             requestADCStatus = 0x5C
 
         };
         
         private enum msgType
         {
+            // jlink 检测错误
             jlinkDiffErrFlag = 0xF1,
+
+            // 可以开始测试上报
             startFlag = 0xDA,
+
+            // 按下测试按钮
             buttonDownFlag = 0xDB,
+
+            // 压板到位状态指示
             putDownFlag = 0xD0,
-            nodeConnect = 0x91,
+
+            // 节点存在状态上报
+            nodeConnect = 0x90,
+
+            // 节点测试硬件版本上报
+            nodeBlockVersion = 0x91,
+
+            //节点短路
             nodeShortOut = 0x92,
 
+            // 空板/运行  电流
             emptyCurValue = 0x43,
             runCurrValue_0 = 0x44,
             runCurrValue_1 = 0x45,
             runCurrValue_2 = 0x46,
 
+            // 节点软件版本
             nodeVersion = 0x89,
+
+            // 节点软件版本超时
             nodeVersionErr = 0x77
         };
 
         // ------------- 
 
         private int cmdcnt = 0;
-
-       
 
 
 
@@ -152,10 +170,12 @@ namespace coordinateCtrlSys
             DataContext = _MainViewModel;
 
             crc8.AutoReset = true;
+            
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            logger.writeToFile("=============================>");
             AddMsg("启动应用");
 
             _UITimer = new DispatcherTimer();
@@ -186,6 +206,7 @@ namespace coordinateCtrlSys
 
         private void MetroWindow_Closed(object sender, EventArgs e)
         {
+            logger.writeToFile("=============================>");
             AddMsg("关闭应用");
         }
 
@@ -199,7 +220,7 @@ namespace coordinateCtrlSys
                 MsgBox.Items.Add(DateTime.Now.ToString("HH:mm:ss") + ": " + msg);
                 MsgBox.ScrollIntoView(MsgBox.Items[MsgBox.Items.Count - 1]);
             });
-
+           
             logger.writeToFile(msg);
         }
 
@@ -480,18 +501,18 @@ namespace coordinateCtrlSys
                     ProgrameFlashTask(data);
                     break;
 
-                // 运行电流
-                case cmdType.requestRunValue_1:
-                    runCurrentTask(data, 0);
-                    break;
+                //// 运行电流
+                //case cmdType.requestRunValue_1:
+                //    runCurrentTask(data, 0);
+                //    break;
 
-                case cmdType.requestRunValue_2:
-                    runCurrentTask(data, 1);
-                    break;
+                //case cmdType.requestRunValue_2:
+                //    runCurrentTask(data, 1);
+                //    break;
 
-                case cmdType.requestRunValue_3:
-                    runCurrentTask(data, 2);
-                    break;
+                //case cmdType.requestRunValue_3:
+                //    runCurrentTask(data, 2);
+                //    break;
 
                 case cmdType.requestRealData:
                     putRealADCDataTask(data);
@@ -805,6 +826,45 @@ namespace coordinateCtrlSys
                     AddMsg("Block " + (nodeNumber / 8 + 1) + "# No. " + (nodeNumber % 8 + 1) + (nodeConnectFlag ? " " : " 未") + "连接");
                     break;
 
+                case msgType.nodeBlockVersion:
+                    int panelNum = (ushort)requestData[8];
+
+                    string panelStr = "";
+
+                    if (panelNum == 0)
+                    {
+                        panelStr = "Block 1# ";
+                    }
+                    else if(panelNum == 1)
+                    {
+                        panelStr = "Block 2# ";
+                    }
+                    else
+                    {
+                        AddMsg("Block 版本指令异常");
+                        return;
+                    }
+
+                    byte _version = requestData[9];
+
+                    string showStr = "V5";
+                    if (_version == 0x0A)
+                    {
+                        showStr = showStr + "A ";
+                    }
+                    else if (_version == 0x0B)
+                    {
+                        showStr = showStr + "B ";
+                    }
+                    else
+                    {
+                        showStr = "异常";
+                    }
+
+                    AddMsg(panelStr + showStr + "版本");
+
+                    break;
+
                 case msgType.nodeShortOut:
                     int nodeShortOutNumber = (ushort)requestData[8];
                     bool nodeShortOutFlag = (requestData[9] == 0x01) ? true : false;
@@ -820,7 +880,7 @@ namespace coordinateCtrlSys
 
                     int nodeEmptyNumber = (ushort)requestData[8];
 
-                    float emptyValue = BitConverter.ToSingle(requestData, 8);
+                    float emptyValue = BitConverter.ToSingle(requestData, 9);
 
                     if (emptyValue < _emptyRange[0] || emptyValue > _emptyRange[1])
                     {
@@ -830,6 +890,8 @@ namespace coordinateCtrlSys
                     {
                         _MainViewModel.nodeEmptyCurrentStatus((nodeEmptyNumber / 8), (nodeEmptyNumber % 8 + 1), true, (float)Math.Round(emptyValue, 2));
                     }
+
+                    logger.saveCurrentValue("EmptyCurrent," + (float)Math.Round(emptyValue, 2));
                    
                     break;
 
@@ -838,7 +900,7 @@ namespace coordinateCtrlSys
 
                     var nodeRunCurr_0 = (ushort)requestData[8];
 
-                    float runCurr_0 = BitConverter.ToSingle(requestData, 8);
+                    float runCurr_0 = BitConverter.ToSingle(requestData, 9);
 
                     runCurrentValue[nodeRunCurr_0, 0] = runCurr_0;
 
@@ -847,6 +909,8 @@ namespace coordinateCtrlSys
                         _MainViewModel.boardCurrentTask((nodeRunCurr_0 / 8), (nodeRunCurr_0 % 8 + 1), (float)Math.Round(runCurr_0, 2), 1);
                     }
 
+                    logger.saveCurrentValue("runCurrent," + (float)Math.Round(runCurr_0, 2));
+
                     break;
 
                 case msgType.runCurrValue_1:
@@ -854,7 +918,7 @@ namespace coordinateCtrlSys
 
                     var nodeRunCurr_1 = (ushort)requestData[8];
 
-                    float runCurr_1 = BitConverter.ToSingle(requestData, 8);
+                    float runCurr_1 = BitConverter.ToSingle(requestData, 9);
 
                     runCurrentValue[nodeRunCurr_1, 1] = runCurr_1;
 
@@ -862,6 +926,9 @@ namespace coordinateCtrlSys
                     {
                         _MainViewModel.boardCurrentTask((nodeRunCurr_1 / 8), (nodeRunCurr_1 % 8 + 1), (float)Math.Round(runCurr_1, 2), 1);
                     }
+
+                    logger.saveCurrentValue("runCurrent," + (float)Math.Round(runCurr_1, 2));
+
                     break;
 
                 case msgType.runCurrValue_2:
@@ -870,7 +937,7 @@ namespace coordinateCtrlSys
 
                     var nodeRunCurr_2 = (ushort)requestData[8];
 
-                    float runCurr_2 = BitConverter.ToSingle(requestData, 8);
+                    float runCurr_2 = BitConverter.ToSingle(requestData, 9);
 
                     runCurrentValue[nodeRunCurr_2, 2] = runCurr_2;
 
@@ -884,21 +951,23 @@ namespace coordinateCtrlSys
                         _MainViewModel.boardCurrentTask((nodeRunCurr_2 / 8), (nodeRunCurr_2 % 8 + 1), (float)Math.Round(avgValue, 2), 2);
                     }
 
+                    logger.saveCurrentValue("runCurrent," + (float)Math.Round(runCurr_2, 2));
+
                     break;
 
                 case msgType.nodeVersion:
-                    int nodeVersion = (ushort)requestData[8];
+                    int nodeSoftVersion = (ushort)requestData[8];
 
-                    string _version = Encoding.ASCII.GetString(requestData, 9, requestData.Length - 9);
+                    string _SoftVersion = Encoding.ASCII.GetString(requestData, 9, requestData.Length - 9);
 
-                    _MainViewModel.nodeVersionStatus((nodeVersion / 8 + 1), (nodeVersion % 8 + 1), false, _version.Substring(_version.Length - 4, 4));
+                    _MainViewModel.nodeVersionStatus((nodeSoftVersion / 8 + 1), (nodeSoftVersion % 8 + 1), false, _SoftVersion.Substring(_SoftVersion.Length - 4, 4));
 
                     break;
 
                 case msgType.nodeVersionErr:
-                    int nodeVersionErr = (ushort)requestData[8];
+                    int nodeSoftVersionErr = (ushort)requestData[8];
 
-                    _MainViewModel.nodeVersionStatus((nodeVersionErr / 8 + 1), (nodeVersionErr % 8 + 1), true, "超时");
+                    _MainViewModel.nodeVersionStatus((nodeSoftVersionErr / 8 + 1), (nodeSoftVersionErr % 8 + 1), true, "超时");
 
                     break;
 
@@ -907,46 +976,46 @@ namespace coordinateCtrlSys
             }
         }
 
-        // 空板电流 处理函数
-        public void EmptyCurrentTask(byte[] requestData)
-        {
-            int nodeNumber = (ushort)requestData[7];
+        //// 空板电流 处理函数
+        //public void EmptyCurrentTask(byte[] requestData)
+        //{
+        //    int nodeNumber = (ushort)requestData[7];
 
-            float[] adcData = new float[100];
+        //    float[] adcData = new float[100];
 
-            Parallel.For(0, 100, i=> {
-                adcData[i] = (float)BitConverter.ToUInt16(requestData, i * 2 + 8) ;
-            });
+        //    Parallel.For(0, 100, i=> {
+        //        adcData[i] = (float)BitConverter.ToUInt16(requestData, i * 2 + 8) ;
+        //    });
 
-            double s = 0;
-            for (int i = 0; i < 100; i++)
-            {
-                s += adcData[i] * adcData[i];
-            }
+        //    double s = 0;
+        //    for (int i = 0; i < 100; i++)
+        //    {
+        //        s += adcData[i] * adcData[i];
+        //    }
 
-            double rmsdata = Math.Sqrt(s / 100);
+        //    double rmsdata = Math.Sqrt(s / 100);
 
-            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x43, (requestData[7]), 0x00, 0x00 };
+        //    byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x43, (requestData[7]), 0x00, 0x00 };
 
-            var dataRange = _MainViewModel.configurationData.ConfigurationNode.EmptyCurrentValue;
-            bool statusFlag = false;
+        //    var dataRange = _MainViewModel.configurationData.ConfigurationNode.EmptyCurrentValue;
+        //    bool statusFlag = false;
 
-            if (rmsdata < dataRange[0] || rmsdata > dataRange[1])
-            {
-                responseData[8] = 0x00;
-            }
-            else
-            {
-                responseData[8] = 0x01;
-                statusFlag = true;
-            }
+        //    if (rmsdata < dataRange[0] || rmsdata > dataRange[1])
+        //    {
+        //        responseData[8] = 0x00;
+        //    }
+        //    else
+        //    {
+        //        responseData[8] = 0x01;
+        //        statusFlag = true;
+        //    }
 
-            _MainViewModel.nodeEmptyCurrentStatus((nodeNumber / 8), (nodeNumber % 8 + 1), statusFlag, (float)Math.Round(rmsdata, 2));
+        //    _MainViewModel.nodeEmptyCurrentStatus((nodeNumber / 8), (nodeNumber % 8 + 1), statusFlag, (float)Math.Round(rmsdata, 2));
 
-            responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+        //    responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
 
-            uartServer.SendData(responseData);
-        }
+        //    uartServer.SendData(responseData);
+        //}
 
         // jlink 烧写处理函数
         public void ProgrameFlashTask(byte[] requestData)
@@ -1012,62 +1081,62 @@ namespace coordinateCtrlSys
 
         }
 
-        // 运行 电流处理函数
-        public void runCurrentTask(byte[] requestData, int stepCnt)
-        {
-            int nodeNumber = requestData[7];
+        //// 运行 电流处理函数
+        //public void runCurrentTask(byte[] requestData, int stepCnt)
+        //{
+        //    int nodeNumber = requestData[7];
 
-            int blockNumber = nodeNumber / 8 + 1;
+        //    int blockNumber = nodeNumber / 8 + 1;
 
-            float[] adcData = new float[100];
+        //    float[] adcData = new float[100];
 
-            Parallel.For(0, 100, i=> {
-                adcData[i] = (float)BitConverter.ToUInt16(requestData, i * 2 + 8);
-            });
+        //    Parallel.For(0, 100, i=> {
+        //        adcData[i] = (float)BitConverter.ToUInt16(requestData, i * 2 + 8);
+        //    });
 
-            double s = 0;
-            for (int i = 0; i < 100; i++)
-            {
-                s += adcData[i] * adcData[i];
-            }
+        //    double s = 0;
+        //    for (int i = 0; i < 100; i++)
+        //    {
+        //        s += adcData[i] * adcData[i];
+        //    }
 
-            float rmsdata = (float)Math.Round(Math.Sqrt(s / 100), 2);
+        //    float rmsdata = (float)Math.Round(Math.Sqrt(s / 100), 2);
 
-            byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, (requestData[6]), (requestData[7]), 0x00, 0x00 };
+        //    byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, (requestData[6]), (requestData[7]), 0x00, 0x00 };
 
-            var runCurrntRange = _MainViewModel.configurationData.ConfigurationNode.BoardCurrentValue;
+        //    var runCurrntRange = _MainViewModel.configurationData.ConfigurationNode.BoardCurrentValue;
 
-            runCurrentValue[nodeNumber, stepCnt - 1] = rmsdata;
+        //    runCurrentValue[nodeNumber, stepCnt - 1] = rmsdata;
 
-            if (rmsdata < runCurrntRange[0] || rmsdata > runCurrntRange[1])
-            {
-                responseData[8] = 0x00;
+        //    if (rmsdata < runCurrntRange[0] || rmsdata > runCurrntRange[1])
+        //    {
+        //        responseData[8] = 0x00;
 
-                // show view
-                _MainViewModel.boardCurrentTask(blockNumber, nodeNumber + 1, rmsdata, 1);
-            }
-            else
-            {
-                if (stepCnt == 3)
-                {
-                    // show view
-                    float _sum = 0;
-                    for (int i = 0; i < 3; i++)
-                    {
-                        _sum += runCurrentValue[nodeNumber, i];
-                    }
+        //        // show view
+        //        _MainViewModel.boardCurrentTask(blockNumber, nodeNumber + 1, rmsdata, 1);
+        //    }
+        //    else
+        //    {
+        //        if (stepCnt == 3)
+        //        {
+        //            // show view
+        //            float _sum = 0;
+        //            for (int i = 0; i < 3; i++)
+        //            {
+        //                _sum += runCurrentValue[nodeNumber, i];
+        //            }
 
-                }
+        //        }
 
-                responseData[8] = 0x01;
-            }
+        //        responseData[8] = 0x01;
+        //    }
 
-            responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+        //    responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
 
-            uartServer.SendData(responseData);
+        //    uartServer.SendData(responseData);
 
 
-        }
+        //}
 
         // 上报 ADC数据
         public void putRealADCDataTask(byte[] requestData)
