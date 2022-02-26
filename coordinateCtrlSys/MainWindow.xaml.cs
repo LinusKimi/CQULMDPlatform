@@ -631,6 +631,9 @@ namespace coordinateCtrlSys
 
             switch ((byte)requestData[7])
             {
+                case 0x53:
+                    _configData = _MainViewModel.configurationData.ConfigurationNode.StopContCMD.Replace(" ", "");
+                    break;
                 case 0x0D:
                     _configData = _MainViewModel.configurationData.ConfigurationNode.SignalCMD.Replace(" ", "");
                     break;
@@ -704,7 +707,7 @@ namespace coordinateCtrlSys
                     return;
 
                 case 0xBC:
-                    var _bv = _MainViewModel.configurationData.ConfigurationNode.EmptyCurrentValue;
+                    var _bv = _MainViewModel.configurationData.ConfigurationNode.BoardCurrentValue;
                     var Bdata_0 = BitConverter.GetBytes(_bv[0]);
                     var Bdata_1 = BitConverter.GetBytes(_bv[1]);
 
@@ -750,7 +753,15 @@ namespace coordinateCtrlSys
             for (int i = 0; i < returnBytes.Length; i++)
                 returnBytes[i] = Convert.ToByte(_configData.Substring(i * 2, 2), 16);
 
-            cmdLen = 2 + returnBytes.Length;
+            if (requestData[7] == 0x0D || requestData[7] == 0x89)
+            {
+                cmdLen = 3 + returnBytes.Length;
+            }
+            else
+            {
+                cmdLen = 2 + returnBytes.Length;
+            }
+            
 
             _resData.Add((byte)(cmdLen / 8));
             _resData.Add((byte)(cmdLen % 8));
@@ -759,6 +770,15 @@ namespace coordinateCtrlSys
 
             for (int i = 0; i < returnBytes.Length; i++)
                 _resData.Add(returnBytes[i]);
+
+            if (requestData[7] == 0x0D )
+            {
+                _resData.Add((byte)_MainViewModel.configurationData.ConfigurationNode.ReturnSignalCMD);
+            }
+            else if(requestData[7] == 0x89)
+            {
+                _resData.Add((byte)_MainViewModel.configurationData.ConfigurationNode.ReturnInVer);
+            }
 
             responseData = new byte[_resData.Count + 1];
             Parallel.For(0, _resData.Count, i =>
@@ -1046,7 +1066,7 @@ namespace coordinateCtrlSys
             proc.StartInfo.UseShellExecute = false;
 
             proc.Start();
-            proc.WaitForExit(5);
+            proc.WaitForExit(2);
 
             string processOut = proc.StandardOutput.ReadToEnd();
             proc.Close();

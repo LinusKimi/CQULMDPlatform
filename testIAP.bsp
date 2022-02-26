@@ -4,13 +4,6 @@
   <Latency>0</Latency>
   <Signals>
     <BSSignal>
-      <Name>请求连接上位机</Name>
-      <DataFormat>Hex</DataFormat>
-      <Data>eb 80 08 be 00 01 fc A4</Data>
-      <Latency>0</Latency>
-      <Active>false</Active>
-    </BSSignal>
-    <BSSignal>
       <Name />
       <DataFormat>Hex</DataFormat>
       <Data />
@@ -25,16 +18,9 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name>JTAG （Number） Set</Name>
+      <Name>JTAG  Set</Name>
       <DataFormat>Hex</DataFormat>
-      <Data>eb 80 08 be 00 03 f0 00 01 9D</Data>
-      <Latency>0</Latency>
-      <Active>false</Active>
-    </BSSignal>
-    <BSSignal>
-      <Name>JTAG （Number） Reset  该指令不需要使用</Name>
-      <DataFormat>Hex</DataFormat>
-      <Data>eb 80 08 be 00 03 f0 00 00 9A</Data>
+      <Data>eb 80 08 be 00 01 f0 80</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -74,13 +60,6 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name />
-      <DataFormat>Hex</DataFormat>
-      <Data />
-      <Latency>0</Latency>
-      <Active>false</Active>
-    </BSSignal>
-    <BSSignal>
       <Name>获取node 配置</Name>
       <DataFormat>Hex</DataFormat>
       <Data />
@@ -98,6 +77,41 @@
       <Name>C0</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 C0 76</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name> 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 07 A0 C0 01 00 01 86 A0 F6 </Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>53</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 02 a0 53 86</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 06 A0 53 55 AA 0B 0A 73</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -105,6 +119,20 @@
       <Name>0D</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 0d 1B</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name> 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 07 A0 0D 55 AA 0D 0C 12 61</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -112,6 +140,20 @@
       <Name>89</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 89 8E</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name> 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 07 A0 89 55 AA 89 45 09 2E</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -119,6 +161,20 @@
       <Name>FF</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 FF CB</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name> 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 06 A0 FF 55 AA FF FF 93 </Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -126,20 +182,55 @@
       <Name>AE</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 AE 7B</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name> 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 06 A0 AE 55 AA AE FF 12</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>EC</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 ec B2</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name> 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 0A A0 EC 00 00 A0 40 00 00 F0 41 77</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name />
       <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>BC</Name>
+      <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 bc 05</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name> 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 0A A0 BC 00 00 40 41 00 00 90 41 DE</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -154,6 +245,13 @@
       <Name>E5</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 E5 8D</Data>
+      <Latency>1</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>E5 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 03 A0 E5 00 54</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -272,21 +370,7 @@
     <BSSignal>
       <Name>节点空板电流</Name>
       <DataFormat>Hex</DataFormat>
-      <Data>eb 80 08 be 00 07 CA 43 00 00 88 A8 02 4E</Data>
-      <Latency>0</Latency>
-      <Active>false</Active>
-    </BSSignal>
-    <BSSignal>
-      <Name />
-      <DataFormat>Hex</DataFormat>
-      <Data />
-      <Latency>0</Latency>
-      <Active>false</Active>
-    </BSSignal>
-    <BSSignal>
-      <Name />
-      <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>eb 80 08 be 00 07 CA 43 00 00 00 F0 41 7E</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -302,19 +386,33 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 50 00 2c</Data>
       <Latency>0</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name> 1</Name>
+      <Name>0 烧写成功 返回</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>EB 90 09 BE 00 03 50 00 01 3D</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data />
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name> jlink 烧写 8</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 50 08 14</Data>
       <Latency>0</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name />
+      <Name>8 烧写失败 返回</Name>
       <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>EB 80 08 BE 00 02 50 08 14 </Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>
@@ -326,9 +424,23 @@
       <Active>false</Active>
     </BSSignal>
     <BSSignal>
-      <Name />
+      <Name>节点运行电流 step 1</Name>
       <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>eb 80 08 be 00 07 CA 44 00 00 00 90 41 54</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>节点运行电流 step 2</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 07 CA 45 00 00 00 90 41 7D</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name>节点运行电流 step 3</Name>
+      <DataFormat>Hex</DataFormat>
+      <Data>eb 80 08 be 00 07 CA 46 00 00  00 90 41 06</Data>
       <Latency>0</Latency>
       <Active>false</Active>
     </BSSignal>

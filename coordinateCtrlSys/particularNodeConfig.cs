@@ -37,6 +37,14 @@ namespace coordinateCtrlSys
 
         private string _InnerVersion;
 
+        private int _returnInVer;
+
+        public int ReturnInVer
+        {
+            get { return _returnInVer; }
+            set { _returnInVer = value; OnPropertyChanged("ReturnInVer"); }
+        }
+
         public string InnerVersion
         {
             get { return _InnerVersion; }

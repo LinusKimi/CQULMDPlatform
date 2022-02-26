@@ -32,13 +32,15 @@
     "ReturnSignalCMD": 18,
 
     // 连续指令
-    //"ContinualCMD": "55 AA 0D 0C",
+    //"ContinualCMD": "55 AA 0C 0B",
 
     // 停止连续
-    //"StopContCMD": "55 AA 0D 0C",
+    "StopContCMD": "55 AA 0B 0A",
 
     // 内部版本
     "InnerVersion": "55 AA 89 45",
+
+    "ReturnInVer": 9,
 
     // 复位指令 "" / null 代表没有该项
     "ResetDev": "55 AA FF FF",

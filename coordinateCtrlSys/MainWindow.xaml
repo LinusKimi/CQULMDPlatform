@@ -223,7 +223,7 @@
                     </DataGridTextColumn>
 
                     <DataGridTextColumn Header="空板电流( mA )" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"    FontSize="30"                             
-                                        Binding="{Binding EmptyCurrent}">
+                                        Binding="{Binding EmptyCurrent, StringFormat={}{0:F1}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Foreground" Value="{Binding EmptyCurrentError, Converter={StaticResource EmptyCurrentForgConverter}}"/>
@@ -259,7 +259,7 @@
                     </DataGridTextColumn>
 
                     <DataGridTextColumn Header="运行电流( mA )" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"    FontSize="30"                              
-                                        Binding="{Binding BoardCurrent}">
+                                        Binding="{Binding BoardCurrent, StringFormat={}{0:F1}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Foreground" Value="{Binding BoardCurrentError, Converter={StaticResource BoardCurrentForgConverter}}"/>
@@ -306,7 +306,7 @@
                     </DataGridTextColumn>
 
                     <DataGridTextColumn Header="空板电流( mA )" MinWidth="140"  FontWeight="Bold"     IsReadOnly="True"    FontSize="30"                             
-                                        Binding="{Binding EmptyCurrent}">
+                                        Binding="{Binding EmptyCurrent, StringFormat={}{0:F1}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Foreground" Value="{Binding EmptyCurrentError, Converter={StaticResource EmptyCurrentForgConverter}}"/>
@@ -342,7 +342,7 @@
                     </DataGridTextColumn>
 
                     <DataGridTextColumn Header="运行电流( mA )" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"  FontSize="30"                                
-                                        Binding="{Binding BoardCurrent}">
+                                        Binding="{Binding BoardCurrent, StringFormat={}{0:F1}}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Foreground" Value="{Binding BoardCurrentError, Converter={StaticResource BoardCurrentForgConverter}}"/>
