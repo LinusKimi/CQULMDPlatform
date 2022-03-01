@@ -326,13 +326,24 @@ namespace coordinateCtrlSys
             if (!File.Exists(binPath))
             {               
                 AddMsg("烧结文件不存在");
+                _MainViewModel.clearSettingFile();
                 return;
             }
+
+            /*** MD5 Check * a20a2cbe0461a6205744fa964e92007d **/
+            //byte[] retMD5Val;
+
+            //using (var _binFS = new FileStream(binPath, FileMode.Open))
+            //{
+            //    System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+            //    retMD5Val = md5.ComputeHash(_binFS);
+            //}
 
             if (string.Empty == _MainViewModel.configurationData.systemConfig.MCU ||
                 string.Empty == _MainViewModel.configurationData.systemConfig.FlashAddress)
             {
                 AddMsg("芯片配置信息不存在");
+                _MainViewModel.clearSettingFile();
                 return;
             }
 
@@ -1189,6 +1200,9 @@ namespace coordinateCtrlSys
             });
 
             // 添加判断算法
+
+
+
 
 
         }

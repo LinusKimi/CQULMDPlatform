@@ -72,6 +72,14 @@ namespace coordinateCtrlSys.ViewModel
                 boardInterface = _t + " / " + configurationData.systemConfig.UARTBaud;
         }
 
+        public void clearSettingFile()
+        {
+            boardInterface = "";
+            PCBAVersion = "";
+            forFactory = "";
+            configurationData = null;
+        }
+
         // ¿ªÊ¼²âÊÔ
         public void StartStatus()
         {
