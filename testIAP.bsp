@@ -78,7 +78,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 C0 76</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name> 返回</Name>
@@ -99,7 +99,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 53 86</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name>返回</Name>
@@ -120,7 +120,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 0d 1B</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name> 返回</Name>
@@ -141,7 +141,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 89 8E</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name> 返回</Name>
@@ -162,7 +162,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 FF CB</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name> 返回</Name>
@@ -183,7 +183,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 AE 7B</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name> 返回</Name>
@@ -204,7 +204,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 ec B2</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name> 返回</Name>
@@ -225,7 +225,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 bc 05</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name> 返回</Name>
@@ -246,7 +246,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 a0 E5 8D</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name>E5 返回</Name>
@@ -385,8 +385,8 @@
       <Name>jlink 烧写 0</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 50 00 2c</Data>
-      <Latency>0</Latency>
-      <Active>false</Active>
+      <Latency>1</Latency>
+      <Active>true</Active>
     </BSSignal>
     <BSSignal>
       <Name>0 烧写成功 返回</Name>
@@ -406,8 +406,8 @@
       <Name> jlink 烧写 8</Name>
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 50 08 14</Data>
-      <Latency>0</Latency>
-      <Active>false</Active>
+      <Latency>1</Latency>
+      <Active>true</Active>
     </BSSignal>
     <BSSignal>
       <Name>8 烧写失败 返回</Name>

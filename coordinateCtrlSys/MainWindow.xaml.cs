@@ -330,14 +330,41 @@ namespace coordinateCtrlSys
                 return;
             }
 
-            /*** MD5 Check * a20a2cbe0461a6205744fa964e92007d **/
-            //byte[] retMD5Val;
+            /*** MD5 Check * http://www.metools.info/other/o21.html **/
 
-            //using (var _binFS = new FileStream(binPath, FileMode.Open))
-            //{
-            //    System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-            //    retMD5Val = md5.ComputeHash(_binFS);
-            //}
+            byte[] retMD5Val;
+            byte[] checkMd5 = new byte[_MainViewModel.configurationData.systemConfig.BinFileSecurity.Length / 2];
+
+            using (var _binFS = new FileStream(binPath, FileMode.Open))
+            {
+                System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+                retMD5Val = md5.ComputeHash(_binFS);
+            }
+
+            for (int i = 0; i < checkMd5.Length; i++)
+                checkMd5[i] = Convert.ToByte(_MainViewModel.configurationData.systemConfig.BinFileSecurity.Substring(i * 2, 2), 16);
+
+            if (retMD5Val.Length != checkMd5.Length)
+            {
+                AddMsg("烧结文件校验失败");
+                _MainViewModel.clearSettingFile();
+                return;
+            }
+            else
+            {
+                for (int j = 0; j < retMD5Val.Length; j++)
+                {
+                    if (retMD5Val[j] != checkMd5[j])
+                    {
+                        AddMsg("烧结文件校验失败");
+                        _MainViewModel.clearSettingFile();
+                        return;
+                    }
+                }
+
+
+            }
+
 
             if (string.Empty == _MainViewModel.configurationData.systemConfig.MCU ||
                 string.Empty == _MainViewModel.configurationData.systemConfig.FlashAddress)
@@ -624,7 +651,7 @@ namespace coordinateCtrlSys
                 return;
             }
 
-            AddMsg("Jlink 区分指令执行完成");
+            AddMsg("执行Jlink区分指令");
 
         }
 

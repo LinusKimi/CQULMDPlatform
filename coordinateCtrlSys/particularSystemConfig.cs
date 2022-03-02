@@ -86,6 +86,13 @@ namespace coordinateCtrlSys
             set { _BinFileName = value; OnPropertyChanged("BinFileName"); }
         }
 
+        private string _BinFileSecurity;
+
+        public string BinFileSecurity
+        {
+            get { return _BinFileSecurity; }
+            set { _BinFileSecurity = value; OnPropertyChanged("BinFileSecurity"); }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

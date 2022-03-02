@@ -37,6 +37,15 @@
   <PropertyGroup>
     <ApplicationIcon>desktop.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>false</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=6.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.6.3.0\lib\netstandard2.0\Autofac.dll</HintPath>
@@ -324,6 +333,7 @@
     </None>
     <None Include="InnerShell\progJlinkBin_0.bat" />
     <None Include="InnerShell\progJlinkBin_1.bat" />
+    <None Include="Properties\app.manifest" />
     <None Include="Settings\testPlatform.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -22,7 +22,10 @@
     "FlashAddress": "0x08000000",
 
     // 烧结文件名
-    "BinFileName": "cq_ul_md_yj_v3.bin"
+    "BinFileName": "cq_ul_md_yj_v3.bin",
+
+    // 烧结文件 校验值
+    "BinFileSecurity": "a20a2cbe0461a6205744fa964e92007d"
   },
   "ConfigurationNode": {
     // 单次指令
