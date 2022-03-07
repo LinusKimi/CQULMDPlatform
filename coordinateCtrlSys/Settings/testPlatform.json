@@ -25,7 +25,10 @@
     "BinFileName": "cq_ul_md_yj_v3.bin",
 
     // 烧结文件 校验值
-    "BinFileSecurity": "a20a2cbe0461a6205744fa964e92007d"
+    "BinFileSecurity": "a20a2cbe0461a6205744fa964e92007d",
+
+    // 保存原始数据 布尔
+    "SaveRawDataBool": true
   },
   "ConfigurationNode": {
     // 单次指令

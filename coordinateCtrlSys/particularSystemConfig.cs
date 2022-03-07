@@ -86,6 +86,7 @@ namespace coordinateCtrlSys
             set { _BinFileName = value; OnPropertyChanged("BinFileName"); }
         }
 
+        // 烧结文件校验值
         private string _BinFileSecurity;
 
         public string BinFileSecurity
@@ -93,6 +94,15 @@ namespace coordinateCtrlSys
             get { return _BinFileSecurity; }
             set { _BinFileSecurity = value; OnPropertyChanged("BinFileSecurity"); }
         }
+
+        private bool _SaveRawDataBool;
+
+        public bool SaveRawDataBool
+        {
+            get { return _SaveRawDataBool; }
+            set { _SaveRawDataBool = value; OnPropertyChanged("SaveRawDataBool"); }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

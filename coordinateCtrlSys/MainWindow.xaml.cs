@@ -69,6 +69,8 @@ namespace coordinateCtrlSys
 
         private float[,] runCurrentValue = new float[16, 3];
 
+        private string RawDataDir = AppDomain.CurrentDomain.BaseDirectory + "rawData";
+
         private enum cmdType {
             //// 响应下位机连接
             //requestConnected = 0xfc ,
@@ -177,6 +179,12 @@ namespace coordinateCtrlSys
         {
             logger.writeToFile("=============================>");
             AddMsg("启动应用");
+
+            // 检查保存数据文件
+            if (Directory.Exists(RawDataDir) == false)
+            {
+                Directory.CreateDirectory(RawDataDir);
+            }
 
             _UITimer = new DispatcherTimer();
 
@@ -1212,6 +1220,27 @@ namespace coordinateCtrlSys
                 return;
             }
 
+            int _blockNo = requestData[7] / 8;
+            int _nodeNo = requestData[7] % 8;
+
+            // save raw data to file
+            if (_MainViewModel.configurationData.systemConfig.SaveRawDataBool)
+            {
+                string _dirPath = RawDataDir + DateTime.Now.ToLongDateString().ToString();
+
+                if (Directory.Exists(_dirPath) == false)
+                    Directory.CreateDirectory(_dirPath);
+
+                string _filePath = _dirPath + DateTime.Now.ToString("HH_mm_ss_ff") + "B" + _blockNo + "_N" + _nodeNo + ".bin";
+
+                using (var _rawDataFS = new FileStream(_filePath, FileMode.Append))
+                {
+                    _rawDataFS.Write(responseData, 0, responseData.Length);
+                    _rawDataFS.Flush();
+                }
+            }
+
+            // 
             float[] adcData = new float[PostADCDataCnt];
 
             Parallel.For(0, PostADCDataCnt, i =>
