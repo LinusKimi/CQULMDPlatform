@@ -47,7 +47,7 @@ namespace coordinateCtrlSys
 
         private Crc8Base crc8 = new Crc8Base(0x07, 0x00, 0x00, false, false);
 
-        private const string DefaultPortName = "COM3";
+        private const string DefaultPortName = "COM27";
 
         private const int PostADCDataCnt = 1400;
 
@@ -143,32 +143,36 @@ namespace coordinateCtrlSys
 
         private int cmdcnt = 0;
 
-
+        private ActionBlock<T> RegisterMethod<T>(Action<T> action) => new ActionBlock<T>(action);
 
         public MainWindow()
         {
             InitializeComponent();
+
+            //_uartActionBlock = RegisterMethod<byte[]>(ProcessTask);
 
             var builder = new ContainerBuilder();
 
             builder.RegisterType<Logger>().SingleInstance();
             builder.RegisterType<MainViewModel>().SingleInstance();
             builder.RegisterType<ReadConfiguration>().As<IConfigReader>().SingleInstance();
+            builder.Register(c => new ActionBlock<byte[]>(ProcessTask)).SingleInstance();
+            builder.RegisterType<UartServer>().SingleInstance();
 
             container = builder.Build();
 
             logger = container.Resolve<Logger>();
             _MainViewModel = container.Resolve<MainViewModel>();
 
-            _uartActionBlock = new ActionBlock<byte[]>(data =>
-            {
-                ProcessTask(data);
-            }, new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 3 });
+            //_uartActionBlock = new ActionBlock<byte[]>(data =>
+            //{
+            //    ProcessTask(data);
+            //}, new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 1 });
+           
+            //uartServer = new UartServer(logger, _uartActionBlock);
 
-            //_uartActionBlock = new ActionBlock<byte[]>(ProcessTask);
-
-            uartServer = new UartServer(logger, _uartActionBlock);
-
+            uartServer = container.Resolve<UartServer>();
+          
             DataContext = _MainViewModel;
 
             crc8.AutoReset = true;
@@ -189,7 +193,7 @@ namespace coordinateCtrlSys
             _UITimer = new DispatcherTimer();
 
             _UITimer.Interval = new TimeSpan(0, 0, 10);
-            
+
             _UITimer.Tick += UITimer_timeout;           
 
             checkJlinkTask();
@@ -214,6 +218,7 @@ namespace coordinateCtrlSys
 
         private void MetroWindow_Closed(object sender, EventArgs e)
         {
+            uartServer.ClosePort();
             logger.writeToFile("=============================>");
             AddMsg("关闭应用");
         }
@@ -240,7 +245,7 @@ namespace coordinateCtrlSys
             var lsportJlink = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\lsPort.jlink";
 
             string _text = "ShowEmuList USB \r\n" +
-                            "q";
+                            "qc";
 
             File.WriteAllText(lsportJlink, _text);
 
@@ -278,10 +283,12 @@ namespace coordinateCtrlSys
             if (processOut.Contains("J-Link[0]:") && processOut.Contains("J-Link[1]:"))
             {
                 int i0 = processOut.IndexOf("Serial number:");
-                int i1 = processOut.IndexOf("Serial number:", i0 + 8);
+                int e0 = processOut.IndexOf(",", i0 + 1);
+                int i1 = processOut.IndexOf("Serial number:", e0 + 8);
+                int e1 = processOut.IndexOf(",", i1 + 1);
 
-                jlinkPortSN[0] = processOut.Substring(i0 + 15, 8);
-                jlinkPortSN[1] = processOut.Substring(i1 + 15, 8);
+                jlinkPortSN[0] = processOut.Substring(i0 + 15, e0 - i0 - 15).Replace(" ", "");
+                jlinkPortSN[1] = processOut.Substring(i1 + 15, e1 - i1 - 15).Replace(" ", "");
 
                 AddMsg("JLink[0] SN. " + jlinkPortSN[0]);
                 AddMsg("JLink[1] SN. " + jlinkPortSN[1]);
@@ -440,6 +447,7 @@ namespace coordinateCtrlSys
 
                 RequestConnectedTask();
 
+                
                 _UITimer.Start();
 
                 StartSystem = true;
@@ -590,10 +598,11 @@ namespace coordinateCtrlSys
         // 区分jlink
         public void DifferJlink()
         {           
-            string _jlinkFileText = "tck1\r\nt1\r\n" +                                    
-                                    "sleep 1000\r\n" +
+            string _jlinkFileText = "tck1\r\nt1\r\n" +                                   
+                                    "sleep 500\r\n" +
                                     "tck0\r\nt0\r\n" +
-                                    "q";
+                                    "sleep 500\r\n" +
+                                    "qc";
             var jlinkFilePath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\diffPort.jlink";
 
             File.WriteAllText(jlinkFilePath, _jlinkFileText);
@@ -678,25 +687,32 @@ namespace coordinateCtrlSys
             switch ((byte)requestData[7])
             {
                 case 0x53:
+                    logger.writeToConsole("0x53");
                     _configData = _MainViewModel.configurationData.ConfigurationNode.StopContCMD.Replace(" ", "");
                     break;
+
                 case 0x0D:
+                    logger.writeToConsole("0x0D");
                     _configData = _MainViewModel.configurationData.ConfigurationNode.SignalCMD.Replace(" ", "");
                     break;
 
                 case 0x89:
+                    logger.writeToConsole("0x89");
                     _configData = _MainViewModel.configurationData.ConfigurationNode.InnerVersion.Replace(" ", "");
                     break;
 
                 case 0xFF:
+                    logger.writeToConsole("0xFF");
                     _configData = _MainViewModel.configurationData.ConfigurationNode.ResetDev.Replace(" ", "");
                     break;
 
                 case 0xAE:
+                    logger.writeToConsole("0xAE");
                     _configData = _MainViewModel.configurationData.ConfigurationNode.USEAE.Replace(" ", "");
                     break;
 
                 case 0xC0:
+                    logger.writeToConsole("0xC0");
                     string connectType = _MainViewModel.configurationData.systemConfig.BoardInterface;
 
                     _resData.Add(0x00); _resData.Add(0x07);
@@ -715,10 +731,10 @@ namespace coordinateCtrlSys
                         _baud = (UInt32)int.Parse(_MainViewModel.configurationData.systemConfig.UARTBaud);
                     }
 
-                    _resData.Add((byte)((_baud >> 24) & 0xFF));
-                    _resData.Add((byte)((_baud >> 16) & 0xFF));
-                    _resData.Add((byte)((_baud >> 8) & 0xFF));
                     _resData.Add((byte)((_baud >> 0) & 0xFF));
+                    _resData.Add((byte)((_baud >> 8) & 0xFF));
+                    _resData.Add((byte)((_baud >> 16) & 0xFF));
+                    _resData.Add((byte)((_baud >> 24) & 0xFF));
 
                     _resData.Add(0x00);
 
@@ -729,6 +745,7 @@ namespace coordinateCtrlSys
                     return;
 
                 case 0xEC:
+                    logger.writeToConsole("0xEC");
                     var _ev = _MainViewModel.configurationData.ConfigurationNode.EmptyCurrentValue;
                     var data_0 = BitConverter.GetBytes(_ev[0]);
                     var data_1 = BitConverter.GetBytes(_ev[1]);
@@ -753,6 +770,7 @@ namespace coordinateCtrlSys
                     return;
 
                 case 0xBC:
+                    logger.writeToConsole("0xBC");
                     var _bv = _MainViewModel.configurationData.ConfigurationNode.BoardCurrentValue;
                     var Bdata_0 = BitConverter.GetBytes(_bv[0]);
                     var Bdata_1 = BitConverter.GetBytes(_bv[1]);
@@ -775,7 +793,8 @@ namespace coordinateCtrlSys
 
                     return;
 
-                case 0xe5:
+                case 0xE5:
+                    logger.writeToConsole("0xE5");
                     var _AEEAConfig = _MainViewModel.configurationData.ConfigurationNode.EnableAEEA;
 
                     _resData.Add(0x00); _resData.Add(0x03);
