@@ -313,6 +313,9 @@
     <None Include="FlashBin\cq_ul_md_yj_v3.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="FlashBin\HK_test.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="InnerShell\diffJlinkPort_0.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -334,7 +337,10 @@
     <None Include="InnerShell\progJlinkBin_0.bat" />
     <None Include="InnerShell\progJlinkBin_1.bat" />
     <None Include="Properties\app.manifest" />
-    <None Include="Settings\testPlatform.json">
+    <None Include="Settings\HD_testPlatform.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Settings\YJ_testPlatform.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NLog.xsd">

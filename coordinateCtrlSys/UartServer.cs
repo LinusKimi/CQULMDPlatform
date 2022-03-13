@@ -135,6 +135,12 @@ namespace coordinateCtrlSys
                 _uartrecvbuf.Add(buff[i]);
             }
 
+            for (int i = 0; i < buff.Length; i++)
+            {
+                Console.Write("{0:X2}", buff[i]);
+            }
+            Console.WriteLine();
+
             while (_uartrecvbuf.Count >= 4)
             {
                 if (_uartrecvbuf[0] != cmdHead[0] ||

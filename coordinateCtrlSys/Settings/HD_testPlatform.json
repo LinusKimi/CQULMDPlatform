@@ -1,0 +1,69 @@
+{
+  "systemConfig": {
+    // 厂商 
+    "Factory": "海康 - HD",
+
+    // 软件版本
+    "SoftwareVersion": "V_TestPlatform",
+
+    // 下位机接口 IIC / UART
+    "BoardInterface": "UART",
+
+    // IIC 速率
+    "IICBaud": "100000",
+
+    // 串口 波特率 （8 - N - 1 暂时默认）
+    "UARTBaud": "57600",
+
+    // 芯片类型
+    "MCU": "HC32F005",
+
+    // 芯片烧写Flash首地址
+    "FlashAddress": "0x00000000",
+
+    // 烧结文件名
+    "BinFileName": "HK_test.bin",
+
+    // 烧结文件 校验值
+    "BinFileSecurity": "1f077d206ce8abae8f046aa8fa8a24cc",
+
+    // 保存原始数据 布尔
+    "SaveRawDataBool": true
+  },
+  "ConfigurationNode": {
+    // 单次指令
+    "SignalCMD": "55 AA 0D 0C",
+
+    // 单次指令回复数据长度
+    "ReturnSignalCMD": 16,
+
+    // 连续指令
+    //"ContinualCMD": "55 AA 0C 0B",
+
+    // 停止连续
+    "StopContCMD": "55 AA 0B 0A",
+
+    // 内部版本
+    "InnerVersion": "55 AA 89 45",
+
+    "ReturnInVer": 9,
+
+    // 复位指令 "" / null 代表没有该项
+    "ResetDev": "55 AA FF FF",
+
+    // AE 指令
+    "USEAE": "55 AA AE FF",
+
+    // EA 指令
+    //"USEEA": "",
+
+    // 是否使用 AE/EA 指令
+    "EnableAEEA": false,
+
+    // 空板电流 [低, 高]
+    "EmptyCurrentValue": [ 1.0, 30.0 ],
+
+    // 运行电流 [低, 高]
+    "BoardCurrentValue": [ 6.0, 12.0 ]
+  }
+}

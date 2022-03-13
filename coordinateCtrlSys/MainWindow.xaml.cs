@@ -203,10 +203,10 @@ namespace coordinateCtrlSys
         {
             _UITimer.Stop();            
 
-            if (uartServer.IsOpen())
-            {
-                uartServer.ClosePort();
-            }
+            //if (uartServer.IsOpen())
+            //{
+            //    uartServer.ClosePort();
+            //}
 
             _MainViewModel.portOpend = false;
 
@@ -514,7 +514,13 @@ namespace coordinateCtrlSys
                     return;
                 }
             }
-                       
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                Console.Write("{0:X2} ", data[i]);               
+            }
+            Console.WriteLine();
+
             var crcTemp = crc8.ComputeHash(data, 0, data.Length - crcByteCnt);
 
             if (crcTemp[0] == data[data.Length - 1])
@@ -906,7 +912,7 @@ namespace coordinateCtrlSys
                     int nodeNumber = (ushort)requestData[8];
                     bool nodeConnectFlag = (requestData[9] == 0x01) ? true : false;
 
-                    _MainViewModel.nodeConnectStatus((nodeNumber / 8), (nodeNumber % 8 + 1), nodeConnectFlag);
+                    _MainViewModel.nodeConnectStatus(nodeNumber / 8, nodeNumber % 8 + 1, nodeConnectFlag);
 
                     AddMsg("Block " + (nodeNumber / 8 + 1) + "# No. " + (nodeNumber % 8 + 1) + (nodeConnectFlag ? " " : " 未") + "连接");
                     break;
@@ -1043,16 +1049,18 @@ namespace coordinateCtrlSys
                 case msgType.nodeVersion:
                     int nodeSoftVersion = (ushort)requestData[8];
 
-                    string _SoftVersion = Encoding.ASCII.GetString(requestData, 9, requestData.Length - 9);
+                    string _SoftVersion = Encoding.ASCII.GetString(requestData, 9, requestData.Length - 10);
 
-                    _MainViewModel.nodeVersionStatus((nodeSoftVersion / 8 + 1), (nodeSoftVersion % 8 + 1), false, _SoftVersion.Substring(_SoftVersion.Length - 4, 4));
+                    logger.writeToConsole("_SoftVersion " + _SoftVersion);
+
+                    _MainViewModel.nodeVersionStatus(nodeSoftVersion / 8 , (nodeSoftVersion % 8 + 1), false, _SoftVersion.Substring(_SoftVersion.Length - 4, 4));
 
                     break;
 
                 case msgType.nodeVersionErr:
                     int nodeSoftVersionErr = (ushort)requestData[8];
 
-                    _MainViewModel.nodeVersionStatus((nodeSoftVersionErr / 8 + 1), (nodeSoftVersionErr % 8 + 1), true, "超时");
+                    _MainViewModel.nodeVersionStatus(nodeSoftVersionErr / 8, (nodeSoftVersionErr % 8 + 1), true, "超时");
 
                     break;
 
@@ -1137,6 +1145,8 @@ namespace coordinateCtrlSys
             proc.Close();
 
             jlinkUsed[blockNumber == 0 ? 0 : 1] = false;
+
+            logger.writeToConsole(processOut);
 
             if (processOut.Contains("Downloading file") &&
                 processOut.Contains("Reset delay:") &&

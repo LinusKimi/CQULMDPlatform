@@ -116,7 +116,7 @@ namespace coordinateCtrlSys.ViewModel
                 foreach (var item in nodeDevInfoModels_one)
                 {
                     if (item.DevCnt == nodeNo)
-                        item.DevConnect = status ? 0 : 1;
+                        item.DevConnect = status ? 2 : 1;
                 }
             }
 
@@ -125,7 +125,7 @@ namespace coordinateCtrlSys.ViewModel
                 foreach (var item in nodeDevInfoModels_two)
                 {
                     if (item.DevCnt == nodeNo)
-                        item.DevConnect = status ? 0 : 1;
+                        item.DevConnect = status ? 2 : 1;
                 }
             }
         }
