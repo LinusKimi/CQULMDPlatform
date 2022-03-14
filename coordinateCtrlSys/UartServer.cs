@@ -59,8 +59,7 @@ namespace coordinateCtrlSys
         {
             _logger = logger;
 
-            serialPort = new SerialPort();
-            serialPort.DataReceived += _serialPortDataRecv;
+            
 
             PortName = SerialPort.GetPortNames();
             _actionBlock = actionBlock;
@@ -71,6 +70,7 @@ namespace coordinateCtrlSys
 
         public bool OpenPort(string _name)
         {
+
             _uartrecvbuf.Clear();
             bool ret = false;
 
@@ -82,6 +82,9 @@ namespace coordinateCtrlSys
 
             try
             {
+                serialPort = new SerialPort();
+                serialPort.DataReceived += _serialPortDataRecv;
+
                 serialPort.PortName = _name;
                 serialPort.BaudRate = 115200;
                 serialPort.DataBits = 8;
@@ -108,9 +111,34 @@ namespace coordinateCtrlSys
             return ret;
         }
 
-        public void ClosePort() => serialPort.Close();
+        public void ClosePort()
+        {
+            try
+            {
+                serialPort.DiscardInBuffer();
+                serialPort.Close();
+                serialPort.Dispose();
+            }
+            catch (Exception e)
+            {
+                _logger.writeToFile(e.ToString());
+            }
+            
+        }
+        public bool IsOpen()
+        {
+            bool ret = false;
+            try
+            {
+                ret = serialPort.IsOpen;
+            }
+            catch (Exception e)
+            {
+                _logger.writeToFile(e.ToString());
+            }
 
-        public bool IsOpen() => serialPort.IsOpen;
+            return ret;
+        }
 
         public void SendData(byte[] data)
         {
@@ -137,7 +165,7 @@ namespace coordinateCtrlSys
 
             for (int i = 0; i < buff.Length; i++)
             {
-                Console.Write("{0:X2}", buff[i]);
+                Console.Write("{0:X2} ", buff[i]);
             }
             Console.WriteLine();
 

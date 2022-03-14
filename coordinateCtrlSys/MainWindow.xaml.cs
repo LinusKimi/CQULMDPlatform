@@ -41,7 +41,7 @@ namespace coordinateCtrlSys
 
         private MainViewModel _MainViewModel;
 
-        private ActionBlock<byte[]> _uartActionBlock;
+        //private ActionBlock<byte[]> _uartActionBlock;
 
         private UartServer uartServer;
 
@@ -376,10 +376,7 @@ namespace coordinateCtrlSys
                         return;
                     }
                 }
-
-
             }
-
 
             if (string.Empty == _MainViewModel.configurationData.systemConfig.MCU ||
                 string.Empty == _MainViewModel.configurationData.systemConfig.FlashAddress)
@@ -393,7 +390,7 @@ namespace coordinateCtrlSys
             {
                 string _jlinkFileText = "erase\r\n" +
                                         "loadfile " + binPath + " " + _MainViewModel.configurationData.systemConfig.FlashAddress + "\r\n" +
-                                        "r\r\n" +
+                                        //"r\r\n" +
                                         "qc\r\n";
 
                 string _jlinkFilePath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\progBin.jlink";
@@ -1053,7 +1050,7 @@ namespace coordinateCtrlSys
 
                     logger.writeToConsole("_SoftVersion " + _SoftVersion);
 
-                    _MainViewModel.nodeVersionStatus(nodeSoftVersion / 8 , (nodeSoftVersion % 8 + 1), false, _SoftVersion.Substring(_SoftVersion.Length - 4, 4));
+                    _MainViewModel.nodeVersionStatus(nodeSoftVersion / 8 , (nodeSoftVersion % 8 + 1), false, _SoftVersion/*.Substring(_SoftVersion.Length - 4, 4)*/);
 
                     break;
 
@@ -1149,7 +1146,7 @@ namespace coordinateCtrlSys
             logger.writeToConsole(processOut);
 
             if (processOut.Contains("Downloading file") &&
-                processOut.Contains("Reset delay:") &&
+                //processOut.Contains("Reset delay:") &&
                 processOut.Contains("Script processing completed"))
             {
                 responseData[8] = 0x01;
@@ -1238,8 +1235,10 @@ namespace coordinateCtrlSys
         {
             byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x5E, (requestData[7]), 0x00, 0x00 };
 
+            logger.writeToConsole("RealADC Receive Length: " + requestData.Length);
             // 地址修改
-            if ((requestData.Length != (PostADCDataCnt * 2)) || requestData[PostADCDataCnt * 2 + 1] == 0xEB)
+            if (requestData.Length != (8 + PostADCDataCnt * 2 + _MainViewModel.configurationData.ConfigurationNode.ReturnSignalCMD + 1) 
+                /*|| requestData[PostADCDataCnt * 2 + 1] == 0xEB*/)
             {
                 responseData[8] = 0x00;
                 responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
@@ -1277,19 +1276,24 @@ namespace coordinateCtrlSys
                 adcData[i] = BitConverter.ToSingle(requestData, i * 4 + 8);
             });
 
-            float[] peakValue = new float[4];
-            float[] peakIndex = new float[4];
-            Parallel.For(0, 4, n =>
-            {
-                
-            });
+            
+
+            //float[] peakValue = new float[4];
+            //float[] peakIndex = new float[4];
+            //Parallel.For(0, 4, n =>
+            //{
+
+            //});
 
             // 添加判断算法
 
 
 
+            responseData[8] = 0x01;
+            responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+            uartServer.SendData(responseData);
 
-
+            logger.writeToConsole("ADC data cmd error");
         }
 
         // ADC 数据异常报告

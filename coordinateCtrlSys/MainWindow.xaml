@@ -240,7 +240,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="软件版本" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"  FontSize="30"                         
+                    <DataGridTextColumn Header="软件版本" MinWidth="180"   FontWeight="Bold"   IsReadOnly="True"  FontSize="30"                         
                                         Binding="{Binding NodeVersion}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
@@ -323,7 +323,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="软件版本" MinWidth="140"   FontWeight="Bold"   IsReadOnly="True"  FontSize="30"                         
+                    <DataGridTextColumn Header="软件版本" MinWidth="180"   FontWeight="Bold"   IsReadOnly="True"  FontSize="30"                         
                                         Binding="{Binding NodeVersion}">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="{x:Type TextBlock}">
