@@ -194,7 +194,7 @@ namespace coordinateCtrlSys
 
             _UITimer.Interval = new TimeSpan(0, 0, 10);
 
-            _UITimer.Tick += UITimer_timeout;           
+            _UITimer.Tick += UITimer_timeout;         
 
             checkJlinkTask();
         }
@@ -403,7 +403,7 @@ namespace coordinateCtrlSys
                 string _progBatText = "jlink.exe usb " + jlinkPortSN[0] + " " +
                                       "-device " +
                                       _MainViewModel.configurationData.systemConfig.MCU +
-                                      " -if swd -speed 1000 " +
+                                      " -if swd -speed 4000 " +
                                       " -CommandFile " + _jlinkFilePath;
 
                 string _progBatPath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\progJlinkBin_0.bat";
@@ -413,7 +413,7 @@ namespace coordinateCtrlSys
                 _progBatText = "jlink.exe usb " + jlinkPortSN[1] + " " +
                                       "-device " +
                                       _MainViewModel.configurationData.systemConfig.MCU +
-                                      " -if swd -speed 1000 " +
+                                      " -if swd -speed 4000 " +
                                       " -CommandFile " + _jlinkFilePath;
 
                 _progBatPath = AppDomain.CurrentDomain.BaseDirectory + "InnerShell\\progJlinkBin_1.bat";
@@ -982,6 +982,7 @@ namespace coordinateCtrlSys
                         _MainViewModel.nodeEmptyCurrentStatus((nodeEmptyNumber / 8), (nodeEmptyNumber % 8 + 1), true, (float)Math.Round(emptyValue, 2));
                     }
 
+                    logger.writeToConsole("EmptyCurrent," + (float)Math.Round(emptyValue, 2));
                     logger.saveCurrentValue("EmptyCurrent," + (float)Math.Round(emptyValue, 2));
                    
                     break;
@@ -1000,6 +1001,7 @@ namespace coordinateCtrlSys
                         _MainViewModel.boardCurrentTask((nodeRunCurr_0 / 8), (nodeRunCurr_0 % 8 + 1), (float)Math.Round(runCurr_0, 2), 1);
                     }
 
+                    logger.writeToConsole("runCurrent_0," + (float)Math.Round(runCurr_0, 2));
                     logger.saveCurrentValue("runCurrent_0," + (float)Math.Round(runCurr_0, 2));
 
                     break;
@@ -1018,6 +1020,7 @@ namespace coordinateCtrlSys
                         _MainViewModel.boardCurrentTask((nodeRunCurr_1 / 8), (nodeRunCurr_1 % 8 + 1), (float)Math.Round(runCurr_1, 2), 1);
                     }
 
+                    logger.writeToConsole("runCurrent_1," + (float)Math.Round(runCurr_1, 2));
                     logger.saveCurrentValue("runCurrent_1," + (float)Math.Round(runCurr_1, 2));
 
                     break;
@@ -1042,6 +1045,7 @@ namespace coordinateCtrlSys
                         _MainViewModel.boardCurrentTask((nodeRunCurr_2 / 8), (nodeRunCurr_2 % 8 + 1), (float)Math.Round(avgValue, 2), 2);
                     }
 
+                    logger.writeToConsole("runCurrent_2," + (float)Math.Round(runCurr_2, 2));
                     logger.saveCurrentValue("runCurrent_2," + (float)Math.Round(runCurr_2, 2));
 
                     break;
@@ -1143,6 +1147,7 @@ namespace coordinateCtrlSys
 
             string processOut = proc.StandardOutput.ReadToEnd();
             proc.Close();
+            proc.Dispose();
 
             jlinkUsed[blockNumber == 0 ? 0 : 1] = false;
 
@@ -1239,9 +1244,10 @@ namespace coordinateCtrlSys
             byte[] responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x03, 0x5E, (requestData[7]), 0x00, 0x00 };
 
             logger.writeToConsole("RealADC Receive Length: " + requestData.Length);
+
+
             // 地址修改
-            if (requestData.Length != (8 + PostADCDataCnt * 2 + _MainViewModel.configurationData.ConfigurationNode.ReturnSignalCMD + 1) 
-                /*|| requestData[PostADCDataCnt * 2 + 1] == 0xEB*/)
+            if (requestData.Length != (8 + PostADCDataCnt * 2 + _MainViewModel.configurationData.ConfigurationNode.ReturnSignalCMD + 1))
             {
                 responseData[8] = 0x00;
                 responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
@@ -1276,7 +1282,7 @@ namespace coordinateCtrlSys
 
             Parallel.For(0, PostADCDataCnt, i =>
             {
-                adcData[i] = BitConverter.ToSingle(requestData, i * 4 + 8);
+                adcData[i] = BitConverter.ToUInt16(requestData, i * 2 + 8);
             });
 
             // get model result
