@@ -31,7 +31,7 @@
     "SaveRawDataBool": true,
 
     // 模块判断结果 index （start 0）
-    "ModelResultIndex": 2806
+    "ModelResultIndex": 0
   },
   "ConfigurationNode": {
     // 单次指令

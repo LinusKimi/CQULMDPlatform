@@ -1279,7 +1279,8 @@ namespace coordinateCtrlSys
                 adcData[i] = BitConverter.ToSingle(requestData, i * 4 + 8);
             });
 
-            byte _modelResult = requestData[_MainViewModel.configurationData.systemConfig.ModelResultIndex];
+            // get model result
+            byte _modelResult = requestData[7 + PostADCDataCnt * 2 + _MainViewModel.configurationData.systemConfig.ModelResultIndex + 1];
 
             if (_modelResult != 0x00 || _modelResult != 0x01 || _modelResult != 0x02)
             {
