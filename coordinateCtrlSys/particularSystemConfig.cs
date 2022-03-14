@@ -104,6 +104,15 @@ namespace coordinateCtrlSys
         }
 
 
+        private int _ModelResultIndex;
+
+        public int ModelResultIndex
+        {
+            get { return _ModelResultIndex; }
+            set { _ModelResultIndex = value; OnPropertyChanged("ModelResultIndex"); }
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged(string v)

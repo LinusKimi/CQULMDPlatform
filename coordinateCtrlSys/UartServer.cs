@@ -59,7 +59,8 @@ namespace coordinateCtrlSys
         {
             _logger = logger;
 
-            
+            serialPort = new SerialPort();
+            serialPort.DataReceived += _serialPortDataRecv;
 
             PortName = SerialPort.GetPortNames();
             _actionBlock = actionBlock;
@@ -81,10 +82,7 @@ namespace coordinateCtrlSys
             }
 
             try
-            {
-                serialPort = new SerialPort();
-                serialPort.DataReceived += _serialPortDataRecv;
-
+            {               
                 serialPort.PortName = _name;
                 serialPort.BaudRate = 115200;
                 serialPort.DataBits = 8;
@@ -92,7 +90,6 @@ namespace coordinateCtrlSys
                 serialPort.StopBits = StopBits.One;
 
                 //serialPort.ReceivedBytesThreshold = 1;
-
 
                 serialPort.Open();
             }
@@ -116,14 +113,12 @@ namespace coordinateCtrlSys
             try
             {
                 serialPort.DiscardInBuffer();
-                serialPort.Close();
-                serialPort.Dispose();
+                serialPort.Close();                
             }
             catch (Exception e)
             {
                 _logger.writeToFile(e.ToString());
-            }
-            
+            }           
         }
         public bool IsOpen()
         {

@@ -143,20 +143,22 @@ namespace coordinateCtrlSys
 
         private int cmdcnt = 0;
 
-        private ActionBlock<T> RegisterMethod<T>(Action<T> action) => new ActionBlock<T>(action);
-
         public MainWindow()
         {
             InitializeComponent();
-
-            //_uartActionBlock = RegisterMethod<byte[]>(ProcessTask);
 
             var builder = new ContainerBuilder();
 
             builder.RegisterType<Logger>().SingleInstance();
             builder.RegisterType<MainViewModel>().SingleInstance();
             builder.RegisterType<ReadConfiguration>().As<IConfigReader>().SingleInstance();
-            builder.Register(c => new ActionBlock<byte[]>(ProcessTask)).SingleInstance();
+
+            //builder.Register(c => new ActionBlock<byte[]>(ProcessTask)).SingleInstance();
+
+            builder.Register(c => new ActionBlock<byte[]>(data=> {
+                ProcessTask(data);
+            }, new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 3})).SingleInstance();
+
             builder.RegisterType<UartServer>().SingleInstance();
 
             container = builder.Build();
@@ -167,9 +169,7 @@ namespace coordinateCtrlSys
             //_uartActionBlock = new ActionBlock<byte[]>(data =>
             //{
             //    ProcessTask(data);
-            //}, new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 1 });
-           
-            //uartServer = new UartServer(logger, _uartActionBlock);
+            //}, new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 1 });         
 
             uartServer = container.Resolve<UartServer>();
           
@@ -201,12 +201,12 @@ namespace coordinateCtrlSys
 
         private void UITimer_timeout(object sender, EventArgs e)
         {
-            _UITimer.Stop();            
+            _UITimer.Stop();
 
-            //if (uartServer.IsOpen())
-            //{
-            //    uartServer.ClosePort();
-            //}
+            if (uartServer.IsOpen())
+            {
+                uartServer.ClosePort();
+            }
 
             _MainViewModel.portOpend = false;
 
@@ -218,7 +218,10 @@ namespace coordinateCtrlSys
 
         private void MetroWindow_Closed(object sender, EventArgs e)
         {
-            uartServer.ClosePort();
+            if (uartServer.IsOpen())
+            {
+                uartServer.ClosePort();
+            }
             logger.writeToFile("=============================>");
             AddMsg("关闭应用");
         }
@@ -997,7 +1000,7 @@ namespace coordinateCtrlSys
                         _MainViewModel.boardCurrentTask((nodeRunCurr_0 / 8), (nodeRunCurr_0 % 8 + 1), (float)Math.Round(runCurr_0, 2), 1);
                     }
 
-                    logger.saveCurrentValue("runCurrent," + (float)Math.Round(runCurr_0, 2));
+                    logger.saveCurrentValue("runCurrent_0," + (float)Math.Round(runCurr_0, 2));
 
                     break;
 
@@ -1015,7 +1018,7 @@ namespace coordinateCtrlSys
                         _MainViewModel.boardCurrentTask((nodeRunCurr_1 / 8), (nodeRunCurr_1 % 8 + 1), (float)Math.Round(runCurr_1, 2), 1);
                     }
 
-                    logger.saveCurrentValue("runCurrent," + (float)Math.Round(runCurr_1, 2));
+                    logger.saveCurrentValue("runCurrent_1," + (float)Math.Round(runCurr_1, 2));
 
                     break;
 
@@ -1039,7 +1042,7 @@ namespace coordinateCtrlSys
                         _MainViewModel.boardCurrentTask((nodeRunCurr_2 / 8), (nodeRunCurr_2 % 8 + 1), (float)Math.Round(avgValue, 2), 2);
                     }
 
-                    logger.saveCurrentValue("runCurrent," + (float)Math.Round(runCurr_2, 2));
+                    logger.saveCurrentValue("runCurrent_2," + (float)Math.Round(runCurr_2, 2));
 
                     break;
 
@@ -1268,7 +1271,7 @@ namespace coordinateCtrlSys
                 }
             }
 
-            // 
+            // format adc raw data
             float[] adcData = new float[PostADCDataCnt];
 
             Parallel.For(0, PostADCDataCnt, i =>
@@ -1276,7 +1279,17 @@ namespace coordinateCtrlSys
                 adcData[i] = BitConverter.ToSingle(requestData, i * 4 + 8);
             });
 
-            
+            byte _modelResult = requestData[_MainViewModel.configurationData.systemConfig.ModelResultIndex];
+
+            if (_modelResult != 0x00 || _modelResult != 0x01 || _modelResult != 0x02)
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                logger.writeToConsole("model data - result - format error");
+                return;
+            }
 
             //float[] peakValue = new float[4];
             //float[] peakIndex = new float[4];

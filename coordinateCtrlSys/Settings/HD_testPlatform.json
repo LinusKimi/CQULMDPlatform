@@ -28,7 +28,10 @@
     "BinFileSecurity": "1f077d206ce8abae8f046aa8fa8a24cc",
 
     // 保存原始数据 布尔
-    "SaveRawDataBool": true
+    "SaveRawDataBool": true,
+
+    // 模块判断结果 index （start 0）
+    "ModelResultIndex": 2806
   },
   "ConfigurationNode": {
     // 单次指令
