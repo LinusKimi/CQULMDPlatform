@@ -89,7 +89,7 @@ namespace coordinateCtrlSys.ViewModel
                 item.EmptyCurrent = 0;
                 item.EmptyCurrentError = 0;
                 item.JlinkProg = 0;
-                item.NodeVersion = "-";
+                item.NodeVersion = "---";
                 item.VersionErr = 0;
                 item.FuncTest = 0;
                 item.BoardCurrent = 0;
@@ -102,7 +102,7 @@ namespace coordinateCtrlSys.ViewModel
                 item.EmptyCurrent = 0;
                 item.EmptyCurrentError = 0;
                 item.JlinkProg = 0;
-                item.NodeVersion = "-";
+                item.NodeVersion = "---";
                 item.VersionErr = 0;
                 item.FuncTest = 0;
                 item.BoardCurrent = 0;

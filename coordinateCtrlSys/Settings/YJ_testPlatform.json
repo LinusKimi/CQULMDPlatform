@@ -4,7 +4,7 @@
     "Factory": "云鲸 - ST",
 
     // 软件版本
-    "SoftwareVersion": "V_TestPlatform",
+    "SoftwareVersion": "MU00-003A",
 
     // 下位机接口 IIC / UART
     "BoardInterface": "IIC",
@@ -25,13 +25,12 @@
     "BinFileName": "cq_ul_md_yj_v3.bin",
 
     // 烧结文件 校验值
-    "BinFileSecurity": "a20a2cbe0461a6205744fa964e92007d",
+    "BinFileSecurity": "149a2df881ab49079aaf88709c3cb824",
 
     // 保存原始数据 布尔
-    "SaveRawDataBool": true,
+    "SaveRawDataBool": true
 
-    // 模块判断结果 index （start 0）
-    "ModelResultIndex": 0
+
   },
   "ConfigurationNode": {
     // 单次指令
@@ -39,6 +38,9 @@
 
     // 单次指令回复数据长度
     "ReturnSignalCMD": 18,
+
+    // 模块判断结果 index （start 0）
+    "ModelResultIndex": 0,
 
     // 连续指令
     //"ContinualCMD": "55 AA 0C 0B",
@@ -64,9 +66,9 @@
     "EnableAEEA": false,
 
     // 空板电流 [低, 高]
-    "EmptyCurrentValue": [ 5.0, 30.0 ],
+    "EmptyCurrentValue": [ 1.0, 30.0 ],
 
     // 运行电流 [低, 高]
-    "BoardCurrentValue": [ 12.0, 18.0 ]
+    "BoardCurrentValue": [ 8.0, 14.0 ]
   }
  }

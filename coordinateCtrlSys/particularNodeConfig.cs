@@ -23,6 +23,15 @@ namespace coordinateCtrlSys
             set { _returnSignalCMD = value; OnPropertyChanged("ReturnSignalCMD"); }
         }
 
+
+        private int _ModelResultIndex;
+
+        public int ModelResultIndex
+        {
+            get { return _ModelResultIndex; }
+            set { _ModelResultIndex = value; OnPropertyChanged("ModelResultIndex"); }
+        }
+
         private string _continualCMD = "";
         public string ContinualCMD {
             get => _continualCMD; 

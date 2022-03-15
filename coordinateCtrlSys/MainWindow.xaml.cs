@@ -69,7 +69,7 @@ namespace coordinateCtrlSys
 
         private float[,] runCurrentValue = new float[16, 3];
 
-        private string RawDataDir = AppDomain.CurrentDomain.BaseDirectory + "rawData";
+        private string RawDataDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rawData");
 
         private enum cmdType {
             //// 响应下位机连接
@@ -218,6 +218,11 @@ namespace coordinateCtrlSys
 
         private void MetroWindow_Closed(object sender, EventArgs e)
         {
+            if (_MainViewModel.portOpend)
+            {
+                RequestDisonnectedTask();
+            }
+
             if (uartServer.IsOpen())
             {
                 uartServer.ClosePort();
@@ -446,8 +451,7 @@ namespace coordinateCtrlSys
                 _MainViewModel.portOpend = true;
 
                 RequestConnectedTask();
-
-                
+               
                 _UITimer.Start();
 
                 StartSystem = true;
@@ -465,6 +469,11 @@ namespace coordinateCtrlSys
         // 停止系统响应
         private void stopSystem_Click(object sender, RoutedEventArgs e)
         {
+            if (_MainViewModel.portOpend)
+            {
+                RequestDisonnectedTask();
+            }
+
             if (uartServer.IsOpen())
             {
                 uartServer.ClosePort();
@@ -598,7 +607,18 @@ namespace coordinateCtrlSys
 
             uartServer.SendData(_responseData);
 
-            AddMsg("指令已发送, 等待连接");
+            AddMsg("请求连接指令已发送");
+        }
+
+        public void RequestDisonnectedTask()
+        {
+            byte[] _responseData = new byte[] { 0xeb, 0x90, 0x09, 0xbe, 0x00, 0x01, 0xfe, 0x00 };
+
+            _responseData[7] = crc8.ComputeHash(_responseData, 0, _responseData.Length - 1)[0];
+
+            uartServer.SendData(_responseData);
+
+            AddMsg("复位下位机指令已发送");
         }
 
         // 区分jlink
@@ -1245,6 +1265,8 @@ namespace coordinateCtrlSys
 
             logger.writeToConsole("RealADC Receive Length: " + requestData.Length);
 
+            int _blockNo = requestData[7] / 8;
+            int _nodeNo = requestData[7] % 8;
 
             // 地址修改
             if (requestData.Length != (8 + PostADCDataCnt * 2 + _MainViewModel.configurationData.ConfigurationNode.ReturnSignalCMD + 1))
@@ -1253,28 +1275,56 @@ namespace coordinateCtrlSys
                 responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
                 uartServer.SendData(responseData);
 
+                _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
                 logger.writeToConsole("ADC data cmd error");
                 return;
             }
 
-            int _blockNo = requestData[7] / 8;
-            int _nodeNo = requestData[7] % 8;
-
             // save raw data to file
             if (_MainViewModel.configurationData.systemConfig.SaveRawDataBool)
             {
-                string _dirPath = RawDataDir + DateTime.Now.ToLongDateString().ToString();
+                string _dirPath = System.IO.Path.Combine(RawDataDir, DateTime.Now.ToLongDateString().ToString());
 
                 if (Directory.Exists(_dirPath) == false)
                     Directory.CreateDirectory(_dirPath);
 
-                string _filePath = _dirPath + DateTime.Now.ToString("HH_mm_ss_ff") + "B" + _blockNo + "_N" + _nodeNo + ".bin";
+                string _filePath = System.IO.Path.Combine(_dirPath , DateTime.Now.ToString("HH_mm_ss_ff_") + "B" + _blockNo + "_N" + _nodeNo + ".rawBin");
 
                 using (var _rawDataFS = new FileStream(_filePath, FileMode.Append))
                 {
-                    _rawDataFS.Write(responseData, 0, responseData.Length);
+                    _rawDataFS.Write(requestData, 0, requestData.Length);
                     _rawDataFS.Flush();
                 }
+            }
+
+            // get model result
+            byte _modelResult = requestData[8 + _MainViewModel.configurationData.ConfigurationNode.ModelResultIndex];
+            logger.writeToConsole("model Result: " + (_modelResult != 0x00));
+            logger.writeToConsole("model Result: " + (_modelResult != 0x01));
+            logger.writeToConsole("model Result: " + (_modelResult != 0x02));
+
+            // 判断结果是否合格
+            if (_modelResult != (byte)0x00 && _modelResult != (byte)0x01 && _modelResult != (byte)0x02)
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
+                logger.writeToConsole("model data - result - format error");
+                return;
+            }
+
+            // 判断是否是硬材质
+            if (_modelResult != (byte)0x01)
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
+                logger.writeToConsole("model data - result - error" + _modelResult);
+                return;
             }
 
             // format adc raw data
@@ -1282,32 +1332,15 @@ namespace coordinateCtrlSys
 
             Parallel.For(0, PostADCDataCnt, i =>
             {
-                adcData[i] = BitConverter.ToUInt16(requestData, i * 2 + 8);
+                adcData[i] = BitConverter.ToUInt16(requestData, i * 2 + 8 + _MainViewModel.configurationData.ConfigurationNode.ReturnSignalCMD);
             });
-
-            // get model result
-            byte _modelResult = requestData[7 + PostADCDataCnt * 2 + _MainViewModel.configurationData.systemConfig.ModelResultIndex + 1];
-
-            if (_modelResult != 0x00 || _modelResult != 0x01 || _modelResult != 0x02)
-            {
-                responseData[8] = 0x00;
-                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
-                uartServer.SendData(responseData);
-
-                logger.writeToConsole("model data - result - format error");
-                return;
-            }
-
-            //float[] peakValue = new float[4];
-            //float[] peakIndex = new float[4];
-            //Parallel.For(0, 4, n =>
-            //{
-
-            //});
 
             // 添加判断算法
 
 
+            // ....
+
+            _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, true);
 
             responseData[8] = 0x01;
             responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
@@ -1327,7 +1360,7 @@ namespace coordinateCtrlSys
             responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
             uartServer.SendData(responseData);
 
-            _MainViewModel.funTestTask((nodeNumber / 8 + 1), (nodeNumber % 8 + 1), false);
+            _MainViewModel.funTestTask(nodeNumber / 8 , (nodeNumber % 8 + 1), false);
 
             AddMsg("Block "+ (nodeNumber / 8 + 1) + " # No. " + (nodeNumber % 8 + 1) + " ADC OR/UR");
         }

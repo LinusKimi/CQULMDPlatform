@@ -4,7 +4,7 @@
     "Factory": "海康 - HD",
 
     // 软件版本
-    "SoftwareVersion": "V_TestPlatform",
+    "SoftwareVersion": "MUOO-00HK",
 
     // 下位机接口 IIC / UART
     "BoardInterface": "UART",
@@ -28,10 +28,9 @@
     "BinFileSecurity": "1f077d206ce8abae8f046aa8fa8a24cc",
 
     // 保存原始数据 布尔
-    "SaveRawDataBool": true,
+    "SaveRawDataBool": true
 
-    // 模块判断结果 index （start 0）
-    "ModelResultIndex": 2
+    
   },
   "ConfigurationNode": {
     // 单次指令
@@ -39,6 +38,9 @@
 
     // 单次指令回复数据长度
     "ReturnSignalCMD": 16,
+
+    // 模块判断结果 index （start 0）
+    "ModelResultIndex": 2,
 
     // 连续指令
     //"ContinualCMD": "55 AA 0C 0B",

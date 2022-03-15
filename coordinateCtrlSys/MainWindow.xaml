@@ -172,7 +172,7 @@
 
                     <iconPacks:PackIconModern Width="60"
                                                     Height="60"
-                                                    Kind="NetworkPort" />
+                                                    Kind="SignStop" />
                 </mah:Tile>
 
             </WrapPanel>
