@@ -1328,7 +1328,9 @@ namespace coordinateCtrlSys
             }
 
             // format adc raw data
-            float[] adcData = new float[PostADCDataCnt];
+            UInt16[] adcData = new UInt16[PostADCDataCnt] ;
+
+            Array.Clear(adcData, 0, adcData.Length);
 
             Parallel.For(0, PostADCDataCnt, i =>
             {
@@ -1336,7 +1338,40 @@ namespace coordinateCtrlSys
             });
 
             // 添加判断算法
+            UInt32 sumAdcData = 0;
+            UInt32 avgAdcData = 0;
 
+            for (int i = 0; i < 200; i++)
+            {
+                sumAdcData += adcData[PostADCDataCnt - i - 1];
+            }
+            avgAdcData = sumAdcData / 200;
+
+            // 求平均值 
+            if (avgAdcData > 300)
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
+                logger.writeToConsole("ADC data avg - error - " + _modelResult);
+                return;
+            }
+
+            int _onePeak = requestData[8 + _MainViewModel.configurationData.ConfigurationNode.ModelResultIndex + 1] * 256 
+                         + requestData[8 + _MainViewModel.configurationData.ConfigurationNode.ModelResultIndex + 2];
+
+            if (_onePeak < 1500)
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
+                logger.writeToConsole("one peak data - error - " + _modelResult);
+                return;
+            }
 
             // ....
 
