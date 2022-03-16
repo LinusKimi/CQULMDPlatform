@@ -1288,7 +1288,7 @@ namespace coordinateCtrlSys
                 if (Directory.Exists(_dirPath) == false)
                     Directory.CreateDirectory(_dirPath);
 
-                string _filePath = System.IO.Path.Combine(_dirPath , DateTime.Now.ToString("HH_mm_ss_ff_") + "B" + _blockNo + "_N" + _nodeNo + ".rawBin");
+                string _filePath = System.IO.Path.Combine(_dirPath, DateTime.Now.ToString("HH_mm_ss_ff_") + _MainViewModel.configurationData.systemConfig.SoftwareVersion + "_B" + _blockNo + "_N" + _nodeNo + ".rawBin");
 
                 using (var _rawDataFS = new FileStream(_filePath, FileMode.Append))
                 {
