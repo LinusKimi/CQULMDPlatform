@@ -1380,7 +1380,7 @@ namespace coordinateCtrlSys
                 uartServer.SendData(responseData);
 
                 _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
-                logger.writeToConsole("ADC data avg - error - " + _modelResult);
+                logger.writeToConsole("ADC data avg - error - " + avgAdcData);
                 return;
             }
 
@@ -1394,7 +1394,7 @@ namespace coordinateCtrlSys
                 uartServer.SendData(responseData);
 
                 _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
-                logger.writeToConsole("one peak data - error - " + _modelResult);
+                logger.writeToConsole("one peak data - error - " + _onePeak);
                 return;
             }
 
@@ -1406,7 +1406,7 @@ namespace coordinateCtrlSys
             responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
             uartServer.SendData(responseData);
 
-            logger.writeToConsole("ADC data cmd error");
+            logger.writeToConsole("ADC data cmd pass --");
         }
 
         // ADC 数据异常报告
