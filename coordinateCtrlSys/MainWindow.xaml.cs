@@ -298,6 +298,31 @@ namespace coordinateCtrlSys
                 jlinkPortSN[0] = processOut.Substring(i0 + 15, e0 - i0 - 15).Replace(" ", "");
                 jlinkPortSN[1] = processOut.Substring(i1 + 15, e1 - i1 - 15).Replace(" ", "");
 
+                // 新增Jlink SN 排序功能
+                try
+                {
+                    var _J_0 = Convert.ToInt32(jlinkPortSN[0]);
+                    var _J_1 = Convert.ToInt32(jlinkPortSN[1]);
+
+                    if (_J_0 > _J_1)
+                    {
+                        var _t = jlinkPortSN[0];
+                        jlinkPortSN[0] = jlinkPortSN[1];
+                        jlinkPortSN[1] = _t;
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    logger.writeToFile("jlink SN short - error " + e);
+                    AddMsg("Jlink SN 排序错误");
+                    AddMsg("请联系技术支持");
+
+                    return;
+                }
+                
+                // ...
+
                 AddMsg("JLink[0] SN. " + jlinkPortSN[0]);
                 AddMsg("JLink[1] SN. " + jlinkPortSN[1]);
 
