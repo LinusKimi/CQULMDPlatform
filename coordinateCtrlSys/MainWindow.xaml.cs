@@ -999,6 +999,14 @@ namespace coordinateCtrlSys
 
                     AddMsg(panelStr + showStr + "版本");
 
+                    if (showStr != _MainViewModel.configurationData.systemConfig.HardwareVersion)
+                    {
+                        //stopSystem.RaiseEvent(new RoutedEventArgs(Tile.ClickEvent));
+                        stopSystem_Click(null,null);
+                        AddMsg("硬件版本不对应 !!!");
+                        return;
+                    }
+
                     break;
 
                 case msgType.nodeShortOut:

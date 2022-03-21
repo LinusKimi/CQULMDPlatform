@@ -26,6 +26,14 @@ namespace coordinateCtrlSys
             set { _SoftwareVersion = value; OnPropertyChanged("SoftwareVersion"); }
         }
 
+        private string _HardwareVersion;
+
+        public string HardwareVersion
+        {
+            get { return _HardwareVersion; }
+            set { _HardwareVersion = value; OnPropertyChanged("HardwareVersion"); }
+        }
+
 
         // 下位机接口 IIC / UART
         private string _BoardInterface;

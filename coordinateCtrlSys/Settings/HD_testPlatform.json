@@ -6,6 +6,9 @@
     // 软件版本
     "SoftwareVersion": "MUOO-00HK",
 
+    //硬件版本
+    "HardwareVersion": "V5A",
+
     // 下位机接口 IIC / UART
     "BoardInterface": "UART",
 
@@ -30,7 +33,7 @@
     // 保存原始数据 布尔
     "SaveRawDataBool": true
 
-    
+
   },
   "ConfigurationNode": {
     // 单次指令

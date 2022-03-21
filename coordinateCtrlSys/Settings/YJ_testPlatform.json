@@ -6,6 +6,9 @@
     // 软件版本
     "SoftwareVersion": "MU00-003A",
 
+    //硬件版本
+    "HardwareVersion": "V5B",
+
     // 下位机接口 IIC / UART
     "BoardInterface": "IIC",
 
