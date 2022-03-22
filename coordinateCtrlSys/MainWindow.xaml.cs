@@ -999,7 +999,9 @@ namespace coordinateCtrlSys
 
                     AddMsg(panelStr + showStr + "版本");
 
-                    if (showStr != _MainViewModel.configurationData.systemConfig.HardwareVersion)
+                    //AddMsg(showStr + "+" + _MainViewModel.configurationData.systemConfig.HardwareVersion);
+
+                    if (!showStr.Contains(_MainViewModel.configurationData.systemConfig.HardwareVersion))
                     {
                         //stopSystem.RaiseEvent(new RoutedEventArgs(Tile.ClickEvent));
                         stopSystem_Click(null,null);
