@@ -13,9 +13,37 @@
     <BSSignal>
       <Name />
       <DataFormat>Hex</DataFormat>
-      <Data />
+      <Data>55 AA EE EE</Data>
       <Latency>0</Latency>
       <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data>55 AA CC CC</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data>55 AA 89 45</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data>55 AA BB BB</Data>
+      <Latency>0</Latency>
+      <Active>false</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
+      <Data>55 AA 0D 0C</Data>
+      <Latency>100</Latency>
+      <Active>true</Active>
     </BSSignal>
     <BSSignal>
       <Name>驱动 JTAG 检测</Name>
@@ -393,7 +421,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 50 00 2c</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name>0 烧写成功 返回</Name>
@@ -414,7 +442,7 @@
       <DataFormat>Hex</DataFormat>
       <Data>eb 80 08 be 00 02 50 08 14</Data>
       <Latency>1</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name>8 烧写失败 返回</Name>
