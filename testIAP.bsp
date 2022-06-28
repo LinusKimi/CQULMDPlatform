@@ -41,9 +41,16 @@
     <BSSignal>
       <Name />
       <DataFormat>Hex</DataFormat>
+      <Data>02 00 00 00 32 32 </Data>
+      <Latency>20</Latency>
+      <Active>true</Active>
+    </BSSignal>
+    <BSSignal>
+      <Name />
+      <DataFormat>Hex</DataFormat>
       <Data>55 AA 0D 0C</Data>
       <Latency>100</Latency>
-      <Active>true</Active>
+      <Active>false</Active>
     </BSSignal>
     <BSSignal>
       <Name>驱动 JTAG 检测</Name>

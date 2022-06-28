@@ -157,7 +157,7 @@ namespace coordinateCtrlSys
 
             builder.Register(c => new ActionBlock<byte[]>(data=> {
                 ProcessTask(data);
-            }, new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 3})).SingleInstance();
+            }, new ExecutionDataflowBlockOptions() { MaxDegreeOfParallelism = 1})).SingleInstance();
 
             builder.RegisterType<UartServer>().SingleInstance();
 
@@ -1409,6 +1409,69 @@ namespace coordinateCtrlSys
             }
 
             // ....
+            int max_index = 0;
+            UInt16 max_data = 0;
+            for (int i = 0; i < 140; i++)
+            {
+                if (adcData[i] > max_data)
+                {
+                    max_index = i;
+                    max_data = adcData[i];
+                }
+            }
+
+            logger.writeToConsole("ADC max index: " + max_index + " max data " + max_data);
+
+            if (max_data < 10000)
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
+                return;
+            }
+
+            int maxBV = 0;
+            UInt16 fall_2500_point = 1;
+            UInt16 less_100_num = 0;
+            for (UInt16 i = 0; i < 140; i++)
+            {
+                if (adcData[i] > maxBV)
+                {
+                    maxBV = adcData[i];
+                }
+
+                if (adcData[i] < 8000 && fall_2500_point < 2)
+                {
+                    fall_2500_point = i;
+                }
+                if (adcData[i] > 8000 && fall_2500_point > 2)
+                {
+                    fall_2500_point = 1;
+                }
+                //if (adcBuff[i] < 500 && fall_500_point > 14)
+                //{
+                //    fall_500_point = i;
+                //}
+                //if (adcData[i] < 100)
+                //{
+                //    less_100_num = (ushort)(less_100_num + 1);
+                //}
+            }
+
+            if (maxBV < 10000 || fall_2500_point < 100)
+            {
+                responseData[8] = 0x00;
+                responseData[9] = crc8.ComputeHash(responseData, 0, responseData.Length - 1)[0];
+                uartServer.SendData(responseData);
+
+                _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, false);
+                logger.writeToConsole("maxBV: " + maxBV + " fall_2500_point " + fall_2500_point);
+                return;
+            }
+
+
 
             _MainViewModel.funTestTask(_blockNo, _nodeNo + 1, true);
 
