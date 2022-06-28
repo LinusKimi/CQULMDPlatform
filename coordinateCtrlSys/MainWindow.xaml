@@ -11,7 +11,7 @@
         xmlns:viewmodel="clr-namespace:coordinateCtrlSys.ViewModel" 
         d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
         FontFamily="simsun"
-        Title="材质检测PCBA生产测试工装上位机 V1.0.0" 
+        Title="材质检测PCBA生产测试工装上位机 V1.1.0" 
         Height="900" MinHeight="900"
         Width="1350" MinWidth="1350"
         ResizeMode="CanResizeWithGrip"
