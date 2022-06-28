@@ -1446,7 +1446,7 @@ namespace coordinateCtrlSys
                 {
                     fall_2500_point = i;
                 }
-                if (adcData[i] > 8000 && fall_2500_point > 2)
+                if (adcData[i] > 8000 && fall_2500_point >= 2)
                 {
                     fall_2500_point = 1;
                 }
